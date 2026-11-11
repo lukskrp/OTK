@@ -23,8 +23,8 @@ gdk_wayland_public_headers = files(
   'gdkwaylandwindow.h',
 )
 
-install_headers(gdk_wayland_public_headers, subdir: 'gtk-3.0/gdk/wayland')
-install_headers('gdkwayland.h', subdir: 'gtk-3.0/gdk')
+install_headers(gdk_wayland_public_headers, subdir: 'otk-3.0/gdk/wayland')
+install_headers('gdkwayland.h', subdir: 'otk-3.0/gdk')
 
 gdk_wayland_deps = [
   shmlib,

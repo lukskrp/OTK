@@ -119,4 +119,4 @@ a11y_headers = files(
   'gtkwindowaccessible.h',
 )
 
-install_headers(a11y_headers, subdir : 'gtk-3.0/gtk/a11y')
+install_headers(a11y_headers, subdir : 'otk-3.0/gtk/a11y')

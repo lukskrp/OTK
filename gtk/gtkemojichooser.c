@@ -533,7 +533,7 @@ get_emoji_data (void)
       g_clear_error (&error);
 
       gresource_name = g_strconcat (lang, ".gresource", NULL);
-      filename = g_build_filename (_gtk_get_data_prefix (), "share", "gtk-3.0",
+      filename = g_build_filename (_gtk_get_data_prefix (), "share", "otk-3.0",
                                    "emoji", gresource_name, NULL);
       g_clear_pointer (&gresource_name, g_free);
       file = g_mapped_file_new (filename, FALSE, NULL);
@@ -851,7 +851,7 @@ gtk_emoji_chooser_init (GtkEmojiChooser *chooser)
 {
   GtkAdjustment *adj;
 
-  chooser->settings = g_settings_new ("org.gtk.Settings.EmojiChooser");
+  chooser->settings = g_settings_new ("org.otk.Settings.EmojiChooser");
 
   gtk_widget_init_template (GTK_WIDGET (chooser));
 

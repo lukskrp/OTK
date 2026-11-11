@@ -506,7 +506,7 @@ gtk_statusbar_remove_all (GtkStatusbar *statusbar,
  *
  * Retrieves the box containing the label widget.
  *
- * Returns: (type Gtk.Box) (transfer none): a #GtkBox
+ * Returns: (type Otk.Box) (transfer none): a #GtkBox
  *
  * Since: 2.20
  */

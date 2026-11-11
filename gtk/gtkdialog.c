@@ -1942,7 +1942,7 @@ gtk_dialog_buildable_add_child (GtkBuildable  *buildable,
  *
  * Returns the action area of @dialog.
  *
- * Returns: (type Gtk.Box) (transfer none): the action area
+ * Returns: (type Otk.Box) (transfer none): the action area
  *
  * Since: 2.14
  *
@@ -1965,7 +1965,7 @@ gtk_dialog_get_action_area (GtkDialog *dialog)
  * headerbar is only used by the dialog if the
  * #GtkDialog:use-header-bar property is %TRUE.
  *
- * Returns: (type Gtk.HeaderBar) (transfer none): the header bar
+ * Returns: (type Otk.HeaderBar) (transfer none): the header bar
  *
  * Since: 3.12
  */
@@ -1983,7 +1983,7 @@ gtk_dialog_get_header_bar (GtkDialog *dialog)
  *
  * Returns the content area of @dialog.
  *
- * Returns: (type Gtk.Box) (transfer none): the content area #GtkBox.
+ * Returns: (type Otk.Box) (transfer none): the content area #GtkBox.
  *
  * Since: 2.14
  **/

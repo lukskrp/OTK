@@ -4482,7 +4482,7 @@ gtk_places_sidebar_class_init (GtkPlacesSidebarClass *class)
   /**
    * GtkPlacesSidebar::populate-popup:
    * @sidebar: the object which received the signal.
-   * @container: (type Gtk.Widget): a #GtkMenu or another #GtkContainer
+   * @container: (type Otk.Widget): a #GtkMenu or another #GtkContainer
    * @selected_item: (type Gio.File) (nullable): #GFile with the item to which
    *     the popup should refer, or %NULL in the case of a @selected_volume.
    * @selected_volume: (type Gio.Volume) (nullable): #GVolume if the selected
@@ -4597,7 +4597,7 @@ gtk_places_sidebar_class_init (GtkPlacesSidebarClass *class)
   /**
    * GtkPlacesSidebar::drag-action-requested:
    * @sidebar: the object which received the signal.
-   * @context: (type Gdk.DragContext): #GdkDragContext with information about the drag operation
+   * @context: (type Odk.DragContext): #GdkDragContext with information about the drag operation
    * @dest_file: (type Gio.File): #GFile with the tentative location that is being hovered for a drop
    * @source_file_list: (type GLib.List) (element-type GFile) (transfer none):
 	 *   List of #GFile that are being dragged

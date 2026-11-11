@@ -529,7 +529,7 @@ gtk_status_icon_class_init (GtkStatusIconClass *class)
   /**
    * GtkStatusIcon::button-press-event:
    * @status_icon: the object which received the signal
-   * @event: (type Gdk.EventButton): the #GdkEventButton which triggered 
+   * @event: (type Odk.EventButton): the #GdkEventButton which triggered 
    *                                 this signal
    *
    * The ::button-press-event signal will be emitted when a button
@@ -556,7 +556,7 @@ gtk_status_icon_class_init (GtkStatusIconClass *class)
   /**
    * GtkStatusIcon::button-release-event:
    * @status_icon: the object which received the signal
-   * @event: (type Gdk.EventButton): the #GdkEventButton which triggered 
+   * @event: (type Odk.EventButton): the #GdkEventButton which triggered 
    *                                 this signal
    *
    * The ::button-release-event signal will be emitted when a button
@@ -583,7 +583,7 @@ gtk_status_icon_class_init (GtkStatusIconClass *class)
   /**
    * GtkStatusIcon::scroll-event:
    * @status_icon: the object which received the signal.
-   * @event: (type Gdk.EventScroll): the #GdkEventScroll which triggered 
+   * @event: (type Odk.EventScroll): the #GdkEventScroll which triggered 
    *                                 this signal
    *
    * The ::scroll-event signal is emitted when a button in the 4 to 7

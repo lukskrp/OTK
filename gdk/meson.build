@@ -79,10 +79,10 @@ gdk_gir_public_headers = files(
 )
 gdk_nogir_public_headers = [files('gdkkeysyms-compat.h')]
 gdk_public_headers = gdk_gir_public_headers + gdk_nogir_public_headers
-install_headers(gdk_public_headers, subdir : 'gtk-3.0/gdk')
+install_headers(gdk_public_headers, subdir : 'otk-3.0/gdk')
 
 deprecated_h_sources = files('deprecated/gdkcolor.h')
-install_headers(deprecated_h_sources, subdir : 'gtk-3.0/gdk/deprecated')
+install_headers(deprecated_h_sources, subdir : 'otk-3.0/gdk/deprecated')
 
 # This variable is unused, but added just for completeness
 gdk_private_headers = files(
@@ -148,7 +148,7 @@ gdk_enums = gnome.mkenums('gdkenumtypes',
   sources: gdk_public_headers,
   c_template : 'gdkenumtypes.c.template',
   h_template : 'gdkenumtypes.h.template',
-  install_dir: join_paths(gtk_includedir, 'gtk-3.0/gdk'),
+  install_dir: join_paths(gtk_includedir, 'otk-3.0/gdk'),
   install_header : true)
 
 gdkenum_h = gdk_enums[1]
@@ -171,7 +171,7 @@ gdkconfig = configure_file(
   input  : 'gdkconfig.h.meson',
   output : 'gdkconfig.h',
   configuration : gdkconfig_cdata,
-  install_dir: join_paths(gtk_includedir, 'gtk-3.0/gdk'))
+  install_dir: join_paths(gtk_includedir, 'otk-3.0/gdk'))
 
 
 gdkversion_cdata = configuration_data()
@@ -187,7 +187,7 @@ gdkversionmacros = configure_file(
   input  : 'gdkversionmacros.h.in',
   output : 'gdkversionmacros.h',
   configuration: gdkversion_cdata,
-  install_dir: join_paths(gtk_includedir, 'gtk-3.0/gdk'))
+  install_dir: join_paths(gtk_includedir, 'otk-3.0/gdk'))
 
 gdkinc = include_directories('.')
 gdkx11_inc = include_directories('x11')
@@ -287,7 +287,7 @@ if cc.get_id() == 'msvc'
   gdk_link_args += [ '-export:gdk_win32_display_manager_get_type' ]
 endif
 
-libgdk = library('gdk-3',
+libgdk = library('odk-3',
                  soversion: gtk_soversion,
                  version: gtk_library_version,
                  sources: [gdk_sources, gdk_backends_gen_headers, gdkconfig],
@@ -328,11 +328,11 @@ if build_gir
   gdk_gir_sources += gdk_sources + gdk_enums + [gdkconfig]
   gdk_gir = gnome.generate_gir(libgdk,
                                sources: gdk_gir_sources,
-                               namespace: 'Gdk',
+                               namespace: 'Odk',
                                nsversion: gtk_api_version,
                                identifier_prefix: 'Gdk',
                                symbol_prefix: 'gdk',
-                               export_packages: 'gdk-3.0',
+                               export_packages: 'odk-3.0',
                                includes: gdk_gir_inc,
                                header: 'gdk/gdk.h',
                                install: true,
@@ -345,11 +345,11 @@ if build_gir
   if x11_enabled
     gdk_x11_gir = gnome.generate_gir(libgdk,
                                      sources: gdk_x11_public_headers + gdk_x11_sources,
-                                     namespace: 'GdkX11',
+                                     namespace: 'OdkX11',
                                      nsversion: gtk_api_version,
                                      identifier_prefix: 'Gdk',
                                      symbol_prefix: 'gdk',
-                                     export_packages: 'gdk-x11-3.0',
+                                     export_packages: 'odk-x11-3.0',
                                      includes: gdk_gir_inc + [ gdk_gir[0], 'xlib-2.0', ],
                                      install: true,
                                      dependencies: gdk_gir_dep,
@@ -363,11 +363,11 @@ if build_gir
   if win32_enabled
     gdk_win32_gir = gnome.generate_gir(libgdk,
                                      sources: gdk_win32_public_headers + gdk_win32_sources,
-                                     namespace: 'GdkWin32',
+                                     namespace: 'OdkWin32',
                                      nsversion: gtk_api_version,
                                      identifier_prefix: 'Gdk',
                                      symbol_prefix: 'gdk',
-                                     export_packages: 'gdk-win32-3.0',
+                                     export_packages: 'odk-win32-3.0',
                                      includes: gdk_gir_inc + [gdk_gir[0]],
                                      install: true,
                                      dependencies: gdk_gir_dep,

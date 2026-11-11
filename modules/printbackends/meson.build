@@ -98,7 +98,7 @@ printbackends_args = [
   '-DGTK_DISABLE_DEPRECATION_WARNINGS',
   '-DGTK_PRINT_BACKEND_ENABLE_UNSUPPORTED',
 ]
-printbackends_subdir = 'gtk-3.0/@0@/printbackends'.format(gtk_binary_version)
+printbackends_subdir = 'otk-3.0/@0@/printbackends'.format(gtk_binary_version)
 printbackends_install_dir = join_paths(get_option('libdir'), printbackends_subdir)
 
 gio_module_dirs += printbackends_install_dir

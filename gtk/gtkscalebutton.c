@@ -673,7 +673,7 @@ gtk_scale_button_set_adjustment	(GtkScaleButton *button,
  *
  * Retrieves the plus button of the #GtkScaleButton.
  *
- * Returns: (transfer none) (type Gtk.Button): the plus button of the #GtkScaleButton as a #GtkButton
+ * Returns: (transfer none) (type Otk.Button): the plus button of the #GtkScaleButton as a #GtkButton
  *
  * Since: 2.14
  */
@@ -691,7 +691,7 @@ gtk_scale_button_get_plus_button (GtkScaleButton *button)
  *
  * Retrieves the minus button of the #GtkScaleButton.
  *
- * Returns: (transfer none) (type Gtk.Button): the minus button of the #GtkScaleButton as a #GtkButton
+ * Returns: (transfer none) (type Otk.Button): the minus button of the #GtkScaleButton as a #GtkButton
  *
  * Since: 2.14
  */

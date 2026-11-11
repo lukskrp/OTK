@@ -6791,7 +6791,7 @@ gtk_entry_reset_im_context (GtkEntry *entry)
 /**
  * gtk_entry_im_context_filter_keypress:
  * @entry: a #GtkEntry
- * @event: (type Gdk.EventKey): the key event
+ * @event: (type Odk.EventKey): the key event
  *
  * Allow the #GtkEntry input method to internally handle key press
  * and release events. If this function returns %TRUE, then no further

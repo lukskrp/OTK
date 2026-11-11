@@ -1,7 +1,7 @@
 
 # Note: the list of immodules is in $(srcroot)/meson.build!
 
-immodules_install_dir = '@0@/gtk-@1@/@2@/immodules/'.format(gtk_libdir, gtk_api_version, gtk_binary_version)
+immodules_install_dir = '@0@/otk-@1@/@2@/immodules/'.format(gtk_libdir, gtk_api_version, gtk_binary_version)
 gio_module_dirs += immodules_install_dir
 
 foreach l: immodules

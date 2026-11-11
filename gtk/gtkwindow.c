@@ -12886,7 +12886,7 @@ inspector_keybinding_enabled (gboolean *warn)
   *warn = FALSE;
 
   schema = g_settings_schema_source_lookup (g_settings_schema_source_get_default (),
-                                            "org.gtk.Settings.Debug",
+                                            "org.otk.Settings.Debug",
                                             TRUE);
 
   if (schema)
@@ -12908,7 +12908,7 @@ set_warn_again (gboolean warn)
   GSettings *settings;
 
   schema = g_settings_schema_source_lookup (g_settings_schema_source_get_default (),
-                                            "org.gtk.Settings.Debug",
+                                            "org.otk.Settings.Debug",
                                             TRUE);
 
   if (schema)

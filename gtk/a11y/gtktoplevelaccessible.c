@@ -302,7 +302,7 @@ gtk_toplevel_accessible_init (GtkToplevelAccessible *toplevel)
 /**
  * gtk_toplevel_accessible_get_children:
  *
- * Returns: (transfer none) (element-type Gtk.Window): List of
+ * Returns: (transfer none) (element-type Otk.Window): List of
  *   children.
  */
 GList *

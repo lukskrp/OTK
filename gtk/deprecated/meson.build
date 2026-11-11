@@ -84,4 +84,4 @@ gtk_deprecated_headers = files(
   'gtkvpaned.h',
 )
 
-install_headers(gtk_deprecated_headers, subdir: 'gtk-3.0/gtk/deprecated/')
+install_headers(gtk_deprecated_headers, subdir: 'otk-3.0/gtk/deprecated/')

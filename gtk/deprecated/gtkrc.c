@@ -293,7 +293,7 @@
  * * `im_module_file pathname`
  *
  *    Sets the pathname for the IM modules file. Setting this from RC files
- *       is deprecated; you should use the environment variable `GTK_IM_MODULE_FILE`
+ *       is deprecated; you should use the environment variable `OTK_IM_MODULE_FILE`
  *       instead.
  *
  * * `style name [ =
@@ -722,9 +722,9 @@ gtk_rc_make_default_dir (const gchar *type)
   var = g_getenv ("GTK_EXE_PREFIX");
 
   if (var)
-    path = g_build_filename (var, "lib", "gtk-3.0", GTK_BINARY_VERSION, type, NULL);
+    path = g_build_filename (var, "lib", "otk-3.0", GTK_BINARY_VERSION, type, NULL);
   else
-    path = g_build_filename (_gtk_get_libdir (), "gtk-3.0", GTK_BINARY_VERSION, type, NULL);
+    path = g_build_filename (_gtk_get_libdir (), "otk-3.0", GTK_BINARY_VERSION, type, NULL);
 
   return path;
 }
@@ -757,7 +757,7 @@ gtk_rc_get_im_module_path (void)
  * gtk_rc_get_im_module_file:
  *
  * Obtains the path to the IM modules file. See the documentation
- * of the `GTK_IM_MODULE_FILE`
+ * of the `OTK_IM_MODULE_FILE`
  * environment variable for more details.
  *
  * Returns: (type filename): a newly-allocated string containing the
@@ -768,11 +768,34 @@ gtk_rc_get_im_module_path (void)
 gchar *
 gtk_rc_get_im_module_file (void)
 {
-  const gchar *var = g_getenv ("GTK_IM_MODULE_FILE");
+  const gchar *var = g_getenv ("OTK_IM_MODULE_FILE");
   gchar *result = NULL;
 
   if (var)
     result = g_strdup (var);
+
+  /* NixOS: use the input method cache of the active profiles (OTK's own,
+   * never GTK 3's, whose modules have a different ABI). */
+  {
+    const gchar *nix_profiles = g_getenv ("NIX_PROFILES");
+    if (nix_profiles && !result)
+      {
+        gchar **paths = g_strsplit (nix_profiles, " ", -1);
+        guint i;
+        for (i = 0; paths[i] != NULL; i++)
+          {
+            gchar *cache = g_build_filename (paths[i], "etc", "otk-3.0", "immodules.cache", NULL);
+            if (g_file_test (cache, G_FILE_TEST_EXISTS))
+              {
+                g_free (result);
+                result = cache;
+              }
+            else
+              g_free (cache);
+          }
+        g_strfreev (paths);
+      }
+  }
 
   if (!result)
     {

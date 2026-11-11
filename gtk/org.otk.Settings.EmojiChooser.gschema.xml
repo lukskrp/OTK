@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
 
-  <schema id='org.gtk.Settings.EmojiChooser' path='/org/gtk/settings/emoji-chooser/'>
+  <schema id='org.otk.Settings.EmojiChooser' path='/org/otk/settings/emoji-chooser/'>
     <key name='recent-emoji' type='a((auss)u)'>
       <default>[]</default>
       <summary>Recently used Emoji</summary>

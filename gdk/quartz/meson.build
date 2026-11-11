@@ -42,8 +42,8 @@ gdk_quartz_public_headers = files(
   'gdkquartzwindow.h',
 )
 
-install_headers(gdk_quartz_public_headers, subdir: 'gtk-3.0/gdk/quartz')
-install_headers('gdkquartz.h', subdir: 'gtk-3.0/gdk')
+install_headers(gdk_quartz_public_headers, subdir: 'otk-3.0/gdk/quartz')
+install_headers('gdkquartz.h', subdir: 'otk-3.0/gdk')
 
 core_graphics_dep = dependency('appleframeworks', modules : 'CoreGraphics', required : true)
 appkit_dep = dependency('appleframeworks', modules : 'AppKit', required : true)

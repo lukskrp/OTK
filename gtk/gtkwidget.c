@@ -1780,7 +1780,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::size-allocate:
    * @widget: the object which received the signal.
-   * @allocation: (type Gtk.Allocation): the region which has been
+   * @allocation: (type Otk.Allocation): the region which has been
    *   allocated to the widget.
    */
   widget_signals[SIZE_ALLOCATE] =
@@ -2181,7 +2181,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::button-press-event:
    * @widget: the object which received the signal.
-   * @event: (type Gdk.EventButton): the #GdkEventButton which triggered
+   * @event: (type Odk.EventButton): the #GdkEventButton which triggered
    *   this signal.
    *
    * The ::button-press-event signal will be emitted when a button
@@ -2210,7 +2210,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::button-release-event:
    * @widget: the object which received the signal.
-   * @event: (type Gdk.EventButton): the #GdkEventButton which triggered
+   * @event: (type Odk.EventButton): the #GdkEventButton which triggered
    *   this signal.
    *
    * The ::button-release-event signal will be emitted when a button
@@ -2251,7 +2251,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::scroll-event:
    * @widget: the object which received the signal.
-   * @event: (type Gdk.EventScroll): the #GdkEventScroll which triggered
+   * @event: (type Odk.EventScroll): the #GdkEventScroll which triggered
    *   this signal.
    *
    * The ::scroll-event signal is emitted when a button in the 4 to 7
@@ -2281,7 +2281,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::motion-notify-event:
    * @widget: the object which received the signal.
-   * @event: (type Gdk.EventMotion): the #GdkEventMotion which triggered
+   * @event: (type Odk.EventMotion): the #GdkEventMotion which triggered
    *   this signal.
    *
    * The ::motion-notify-event signal is emitted when the pointer moves
@@ -2384,7 +2384,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::key-press-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventKey): the #GdkEventKey which triggered this signal.
+   * @event: (type Odk.EventKey): the #GdkEventKey which triggered this signal.
    *
    * The ::key-press-event signal is emitted when a key is pressed. The signal
    * emission will reoccur at the key-repeat rate when the key is kept pressed.
@@ -2412,7 +2412,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::key-release-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventKey): the #GdkEventKey which triggered this signal.
+   * @event: (type Odk.EventKey): the #GdkEventKey which triggered this signal.
    *
    * The ::key-release-event signal is emitted when a key is released.
    *
@@ -2439,7 +2439,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::enter-notify-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventCrossing): the #GdkEventCrossing which triggered
+   * @event: (type Odk.EventCrossing): the #GdkEventCrossing which triggered
    *   this signal.
    *
    * The ::enter-notify-event will be emitted when the pointer enters
@@ -2468,7 +2468,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::leave-notify-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventCrossing): the #GdkEventCrossing which triggered
+   * @event: (type Odk.EventCrossing): the #GdkEventCrossing which triggered
    *   this signal.
    *
    * The ::leave-notify-event will be emitted when the pointer leaves
@@ -2497,7 +2497,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::configure-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventConfigure): the #GdkEventConfigure which triggered
+   * @event: (type Odk.EventConfigure): the #GdkEventConfigure which triggered
    *   this signal.
    *
    * The ::configure-event signal will be emitted when the size, position or
@@ -2525,7 +2525,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::focus-in-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventFocus): the #GdkEventFocus which triggered
+   * @event: (type Odk.EventFocus): the #GdkEventFocus which triggered
    *   this signal.
    *
    * The ::focus-in-event signal will be emitted when the keyboard focus
@@ -2552,7 +2552,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::focus-out-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventFocus): the #GdkEventFocus which triggered this
+   * @event: (type Odk.EventFocus): the #GdkEventFocus which triggered this
    *   signal.
    *
    * The ::focus-out-event signal will be emitted when the keyboard focus
@@ -2579,7 +2579,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::map-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventAny): the #GdkEventAny which triggered this signal.
+   * @event: (type Odk.EventAny): the #GdkEventAny which triggered this signal.
    *
    * The ::map-event signal will be emitted when the @widget's window is
    * mapped. A window is mapped when it becomes visible on the screen.
@@ -2606,7 +2606,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::unmap-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventAny): the #GdkEventAny which triggered this signal
+   * @event: (type Odk.EventAny): the #GdkEventAny which triggered this signal
    *
    * The ::unmap-event signal will be emitted when the @widget's window is
    * unmapped. A window is unmapped when it becomes invisible on the screen.
@@ -2633,7 +2633,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::property-notify-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventProperty): the #GdkEventProperty which triggered
+   * @event: (type Odk.EventProperty): the #GdkEventProperty which triggered
    *   this signal.
    *
    * The ::property-notify-event signal will be emitted when a property on
@@ -2660,7 +2660,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::selection-clear-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventSelection): the #GdkEventSelection which triggered
+   * @event: (type Odk.EventSelection): the #GdkEventSelection which triggered
    *   this signal.
    *
    * The ::selection-clear-event signal will be emitted when the
@@ -2684,7 +2684,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::selection-request-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventSelection): the #GdkEventSelection which triggered
+   * @event: (type Odk.EventSelection): the #GdkEventSelection which triggered
    *   this signal.
    *
    * The ::selection-request-event signal will be emitted when
@@ -2709,7 +2709,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::selection-notify-event:
    * @widget: the object which received the signal.
-   * @event: (type Gdk.EventSelection):
+   * @event: (type Odk.EventSelection):
    *
    * Returns: %TRUE to stop other handlers from being invoked for the event. %FALSE to propagate the event further.
    */
@@ -2770,7 +2770,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::proximity-in-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventProximity): the #GdkEventProximity which triggered
+   * @event: (type Odk.EventProximity): the #GdkEventProximity which triggered
    *   this signal.
    *
    * To receive this signal the #GdkWindow associated to the widget needs
@@ -2796,7 +2796,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::proximity-out-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventProximity): the #GdkEventProximity which triggered
+   * @event: (type Odk.EventProximity): the #GdkEventProximity which triggered
    *   this signal.
    *
    * To receive this signal the #GdkWindow associated to the widget needs
@@ -3215,7 +3215,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::visibility-notify-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventVisibility): the #GdkEventVisibility which
+   * @event: (type Odk.EventVisibility): the #GdkEventVisibility which
    *   triggered this signal.
    *
    * The ::visibility-notify-event will be emitted when the @widget's
@@ -3248,7 +3248,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::window-state-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventWindowState): the #GdkEventWindowState which
+   * @event: (type Odk.EventWindowState): the #GdkEventWindowState which
    *   triggered this signal.
    *
    * The ::window-state-event will be emitted when the state of the
@@ -3276,7 +3276,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /**
    * GtkWidget::damage-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventExpose): the #GdkEventExpose event
+   * @event: (type Odk.EventExpose): the #GdkEventExpose event
    *
    * Emitted when a redirected window belonging to @widget gets drawn into.
    * The region/area members of the event shows what area of the redirected
@@ -3302,7 +3302,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 /**
    * GtkWidget::grab-broken-event:
    * @widget: the object which received the signal
-   * @event: (type Gdk.EventGrabBroken): the #GdkEventGrabBroken event
+   * @event: (type Odk.EventGrabBroken): the #GdkEventGrabBroken event
    *
    * Emitted when a pointer or keyboard grab on a window belonging
    * to @widget gets broken.

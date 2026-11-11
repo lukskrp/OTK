@@ -959,7 +959,7 @@ gtk_settings_class_init (GtkSettingsClass *class)
   g_assert (result == PROP_ERROR_BELL);
 
   /**
-   * GtkSettings:color-hash: (type GLib.HashTable(utf8,Gdk.Color)) (transfer container)
+   * GtkSettings:color-hash: (type GLib.HashTable(utf8,Odk.Color)) (transfer container)
    *
    * Holds a hash table representation of the #GtkSettings:gtk-color-scheme
    * setting, mapping color names to #GdkColors.

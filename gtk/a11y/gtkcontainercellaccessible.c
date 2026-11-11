@@ -177,7 +177,7 @@ gtk_container_cell_accessible_remove_child (GtkContainerCellAccessible *containe
  *
  * Get a list of children.
  *
- * Returns: (transfer none) (element-type Gtk.CellAccessible)
+ * Returns: (transfer none) (element-type Otk.CellAccessible)
  */
 GList *
 gtk_container_cell_accessible_get_children (GtkContainerCellAccessible *container)

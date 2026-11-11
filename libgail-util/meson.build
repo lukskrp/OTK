@@ -9,7 +9,7 @@ gailutil_public_headers = files(
   'gail-util.h',
   )
 
-install_headers(gailutil_public_headers, subdir : 'gail-3.0/libgail-util')
+install_headers(gailutil_public_headers, subdir : 'otk-gail-3.0/libgail-util')
 
 gailutil_link_args = common_ldflags
 
@@ -17,7 +17,7 @@ if cc.get_id() == 'msvc'
   gailutil_link_args += '-def:@0@/gailutil.def'.format(meson.current_source_dir())
 endif
 
-libgailutil = library('gailutil-3',
+libgailutil = library('otk-gailutil-3',
                       soversion: gtk_soversion,
                       version: gail_library_version,
                       darwin_versions: ['1', '1.0'],

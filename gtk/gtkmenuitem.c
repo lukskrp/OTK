@@ -1506,7 +1506,7 @@ update_arrow_gadget (GtkMenuItem *menu_item)
 /**
  * gtk_menu_item_set_submenu:
  * @menu_item: a #GtkMenuItem
- * @submenu: (allow-none) (type Gtk.Menu): the submenu, or %NULL
+ * @submenu: (allow-none) (type Otk.Menu): the submenu, or %NULL
  *
  * Sets or replaces the menu item’s submenu, or removes it when a %NULL
  * submenu is passed.

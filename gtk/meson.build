@@ -626,7 +626,7 @@ gtk_nogir_public_headers = files(
 # Installed headers without compatibility guarantees that are not included in gtk/gtk.h
 gtk_semi_private_headers = files('gtktextlayout.h')
 gtk_public_headers = gtk_gir_public_headers + gtk_nogir_public_headers
-install_headers(gtk_public_headers + gtk_semi_private_headers, subdir: 'gtk-3.0/gtk')
+install_headers(gtk_public_headers + gtk_semi_private_headers, subdir: 'otk-3.0/gtk')
 
 if os_unix
   gtk_unix_print_headers = [
@@ -637,7 +637,7 @@ if os_unix
     'gtkunixprint-autocleanups.h',
     'gtkunixprint.h',
   ]
-  install_headers(gtk_unix_print_headers, subdir: 'gtk-3.0/unix-print/gtk')
+  install_headers(gtk_unix_print_headers, subdir: 'otk-3.0/unix-print/gtk')
 endif
 
 gtk_unix_sources = files(
@@ -768,7 +768,7 @@ gtktypebuiltins = gnome.mkenums('gtktypebuiltins',
                                 sources: gtk_public_headers + gtk_deprecated_headers + a11y_headers,
                                 c_template: 'gtktypebuiltins.c.template',
                                 h_template: 'gtktypebuiltins.h.template',
-                                install_dir: join_paths(gtk_includedir, 'gtk-3.0/gtk'),
+                                install_dir: join_paths(gtk_includedir, 'otk-3.0/gtk'),
                                 install_header: true)
 
 gtktypebuiltins_h = gtktypebuiltins[1]
@@ -811,7 +811,7 @@ gtkversion_cdata.set('LT_CURRENT_MINUS_AGE', gtk_soversion)
 gtkversion = configure_file(input: 'gtkversion.h.in',
                             output: 'gtkversion.h',
                             configuration: gtkversion_cdata,
-                            install_dir: join_paths(gtk_includedir, 'gtk-3.0/gtk'))
+                            install_dir: join_paths(gtk_includedir, 'otk-3.0/gtk'))
 
 gtk_gen_headers = [
   gtkmarshalers,
@@ -933,10 +933,10 @@ endif
 gtk_deps += libintl_dep
 
 gtk_settings_schemas = [
-  'org.gtk.Settings.FileChooser.gschema.xml',
-  'org.gtk.Settings.ColorChooser.gschema.xml',
-  'org.gtk.Settings.EmojiChooser.gschema.xml',
-  'org.gtk.Settings.Debug.gschema.xml',
+  'org.otk.Settings.FileChooser.gschema.xml',
+  'org.otk.Settings.ColorChooser.gschema.xml',
+  'org.otk.Settings.EmojiChooser.gschema.xml',
+  'org.otk.Settings.Debug.gschema.xml',
 ]
 install_data(gtk_settings_schemas, install_dir: gtk_schemasdir)
 gnome.compile_schemas(depend_files: files(gtk_settings_schemas),
@@ -976,7 +976,7 @@ foreach l: immodules
 endforeach
 
 # Library
-libgtk = library('gtk-3',
+libgtk = library('otk-3',
                  soversion: gtk_soversion,
                  version: gtk_library_version,
                  sources: [typefuncs, gtk_sources, gtkmarshal_h, gtkprivatetypebuiltins_h],
@@ -1012,11 +1012,11 @@ if build_gir
 
   gtk_gir = gnome.generate_gir(libgtk,
                                sources: gtk_introspection_sources,
-                               namespace: 'Gtk',
+                               namespace: 'Otk',
                                nsversion: gtk_api_version,
                                identifier_prefix: 'Gtk',
                                symbol_prefix: 'gtk',
-                               export_packages: 'gtk+-3.0',
+                               export_packages: 'otk-3.0',
                                includes: gtk_gir_includes,
                                header: 'gtk/gtk.h',
                                install: true,
@@ -1068,7 +1068,7 @@ foreach lang : [
     source_dir: 'emoji',
     gresource_bundle: true,
     install: true,
-    install_dir: join_paths(gtk_datadir, 'gtk-3.0', 'emoji'),
+    install_dir: join_paths(gtk_datadir, 'otk-3.0', 'emoji'),
   )
 endforeach
 
@@ -1089,7 +1089,7 @@ install_data(['gtk-keys.css.emacs'],
 
 # Data to install
 install_data('gtkbuilder.rng',
-             install_dir: join_paths(gtk_datadir, 'gtk-3.0'))
+             install_dir: join_paths(gtk_datadir, 'otk-3.0'))
 
 install_data('gtkbuilder.loc', 'gtkbuilder.its',
              install_dir: join_paths(gtk_datadir, 'gettext/its'))
@@ -1098,7 +1098,7 @@ install_data('gtkbuilder.loc', 'gtkbuilder.its',
 gtk_tools = []
 
 gtk_query_settings = executable(
-  'gtk-query-settings',
+  'otk-query-settings',
   'gtk-query-settings.c',
   c_args: gtk_cargs,
   dependencies: libgtk_dep,
@@ -1107,7 +1107,7 @@ gtk_query_settings = executable(
 gtk_tools += gtk_query_settings
 
 gtk_builder_tool = executable(
-  'gtk-builder-tool',
+  'otk-builder-tool',
   'gtk-builder-tool.c',
   c_args: gtk_cargs,
   dependencies: libgtk_dep,
@@ -1120,7 +1120,7 @@ if win32_enabled
   gen_uac_manifest = find_program('generate-uac-manifest.py')
 
   uac_exe_pkg = 'gtk3'
-  uac_exe_name = 'gtk-update-icon-cache'
+  uac_exe_name = 'otk-update-icon-cache'
 
   # Well, we have to forgo the xxx.exe.manifest in the output listing, since
   # compile_resources doesn't like to consume targets with multiple outputs,
@@ -1138,7 +1138,7 @@ if win32_enabled
 endif
 
 gtk_update_icon_cache = executable(
-  'gtk-update-icon-cache',
+  'otk-update-icon-cache',
   'updateiconcache.c',
   extra_update_icon_cache_objs,
   c_args: gtk_cargs,
@@ -1148,7 +1148,7 @@ gtk_update_icon_cache = executable(
 gtk_tools += gtk_update_icon_cache
 
 gtk_query_immodules = executable(
-  'gtk-query-immodules-3.0',
+  'otk-query-immodules-3.0',
   'queryimmodules.c',
   'gtkutils.c',
   c_args: gtk_cargs,
@@ -1158,7 +1158,7 @@ gtk_query_immodules = executable(
 gtk_tools += gtk_query_immodules
 
 gtk_encode_symbolic_svg = executable(
-  'gtk-encode-symbolic-svg',
+  'otk-encode-symbolic-svg',
   'encodesymbolic.c',
   c_args: gtk_cargs,
   dependencies: libgtk_dep,
@@ -1167,7 +1167,7 @@ gtk_encode_symbolic_svg = executable(
 gtk_tools += gtk_encode_symbolic_svg
 
 gtk_launch = executable(
-  'gtk-launch',
+  'otk-launch',
   'gtk-launch.c',
   c_args: gtk_cargs,
   dependencies: libgtk_dep,
