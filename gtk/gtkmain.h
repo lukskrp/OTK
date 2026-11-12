@@ -141,6 +141,8 @@ gboolean gtk_init_check_abi_check (int    *argc,
 
 GDK_AVAILABLE_IN_ALL
 void           gtk_disable_setlocale    (void);
+GDK_AVAILABLE_IN_OTK_1
+void           gtk_disable_portals      (void);
 GDK_AVAILABLE_IN_ALL
 PangoLanguage *gtk_get_default_language (void);
 GDK_AVAILABLE_IN_3_12

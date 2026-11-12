@@ -436,5 +436,16 @@
 # define GDK_AVAILABLE_IN_3_24                _GDK_EXTERN
 #endif
 
+/**
+ * OTK_API_VERSION:
+ *
+ * The version of the API that OTK adds on top of GTK 3. Code that also
+ * builds against stock GTK 3 can test `#ifdef OTK_API_VERSION`.
+ */
+#define OTK_API_VERSION 1
+
+/* API that OTK adds on top of GTK 3, by OTK_API_VERSION. */
+#define GDK_AVAILABLE_IN_OTK_1                _GDK_EXTERN
+
 #endif  /* __GDK_VERSION_MACROS_H__ */
 

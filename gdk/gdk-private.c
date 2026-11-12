@@ -26,6 +26,8 @@ gdk__private__ (void)
     gdk_window_titlebar_gesture,
     gdk_window_is_impl_offscreen,
     gdk_running_in_sandbox,
+    gdk_disable_portals,
+    gdk_portals_disabled,
   };
 
   return &table;

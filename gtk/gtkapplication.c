@@ -36,6 +36,7 @@
 #include "gdk/gdk-private.h"
 
 #include "gtkapplicationprivate.h"
+#include "gtkprivate.h"
 #include "gtkclipboardprivate.h"
 #include "gtkmarshalers.h"
 #include "gtkmain.h"
@@ -299,6 +300,9 @@ gtk_application_identify_to_portal (GtkApplication *application)
   GApplication *g_application = G_APPLICATION (application);
   GDBusConnection *session_bus;
   const char *application_id;
+
+  if (gtk_portals_disabled ())
+    return;
 
   session_bus = g_application_get_dbus_connection (g_application);
   if (!session_bus)

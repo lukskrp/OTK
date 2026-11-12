@@ -475,10 +475,28 @@ gdk_running_in_sandbox (void)
   return g_file_test ("/.flatpak-info", G_FILE_TEST_EXISTS);
 }
 
+static gboolean portals_disabled = FALSE;
+
+/* See gtk_disable_portals(). */
+void
+gdk_disable_portals (void)
+{
+  portals_disabled = TRUE;
+}
+
+gboolean
+gdk_portals_disabled (void)
+{
+  return portals_disabled;
+}
+
 gboolean
 gdk_should_use_portal (void)
 {
   static const char *use_portal = NULL;
+
+  if (portals_disabled)
+    return FALSE;
 
   if (G_UNLIKELY (use_portal == NULL))
     {

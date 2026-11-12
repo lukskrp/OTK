@@ -129,6 +129,8 @@ struct _GdkDisplay
   GdkRenderingMode rendering_mode;
 
   GList *seats;
+
+  GListStore *monitor_model;  /* created by gdk_display_get_monitors() */
 };
 
 struct _GdkDisplayClass

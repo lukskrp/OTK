@@ -89,6 +89,10 @@ GDK_AVAILABLE_IN_3_22
 GdkSubpixelLayout gdk_monitor_get_subpixel_layout (GdkMonitor   *monitor);
 GDK_AVAILABLE_IN_3_22
 gboolean          gdk_monitor_is_primary          (GdkMonitor   *monitor);
+GDK_AVAILABLE_IN_OTK_1
+const char *      gdk_monitor_get_connector       (GdkMonitor   *monitor);
+GDK_AVAILABLE_IN_OTK_1
+double            gdk_monitor_get_scale           (GdkMonitor   *monitor);
 
 G_END_DECLS
 

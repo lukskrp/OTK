@@ -33,6 +33,9 @@ void             gdk_display_set_debug_updates (GdkDisplay *display,
 
 gboolean        gdk_window_is_impl_offscreen    (GdkWindow *window);
 
+void            gdk_disable_portals  (void);
+gboolean        gdk_portals_disabled (void);
+
 const gchar *   gdk_get_desktop_startup_id   (void);
 const gchar *   gdk_get_desktop_autostart_id (void);
 
@@ -75,6 +78,9 @@ typedef struct {
   gboolean (* gdk_window_is_impl_offscreen) (GdkWindow *window);
 
   gboolean (* gdk_running_in_sandbox) (void);
+
+  void     (* gdk_disable_portals)  (void);
+  gboolean (* gdk_portals_disabled) (void);
 } GdkPrivateVTable;
 
 GDK_AVAILABLE_IN_ALL

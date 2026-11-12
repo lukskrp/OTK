@@ -52,6 +52,8 @@ enum {
   PROP_HEIGHT_MM,
   PROP_REFRESH_RATE,
   PROP_SUBPIXEL_LAYOUT,
+  PROP_CONNECTOR,
+  PROP_SCALE,
   LAST_PROP
 };
 
@@ -124,6 +126,14 @@ gdk_monitor_get_property (GObject    *object,
 
     case PROP_SUBPIXEL_LAYOUT:
       g_value_set_enum (value, monitor->subpixel_layout);
+      break;
+
+    case PROP_CONNECTOR:
+      g_value_set_string (value, monitor->connector);
+      break;
+
+    case PROP_SCALE:
+      g_value_set_double (value, gdk_monitor_get_scale (monitor));
       break;
 
     default:
@@ -236,6 +246,36 @@ gdk_monitor_class_init (GdkMonitorClass *class)
                        GDK_TYPE_SUBPIXEL_LAYOUT,
                        GDK_SUBPIXEL_LAYOUT_UNKNOWN,
                        G_PARAM_READABLE);
+
+  /**
+   * GdkMonitor:connector:
+   *
+   * The name of the connector the monitor is plugged into, such as
+   * `DP-1` or `HDMI-A-2` (RandR output or monitor name on X11).
+   *
+   * Since: OTK 1
+   */
+  props[PROP_CONNECTOR] =
+    g_param_spec_string ("connector",
+                         "Connector",
+                         "The connector name",
+                         NULL,
+                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
+
+  /**
+   * GdkMonitor:scale:
+   *
+   * The scale from logical monitor coordinates to device pixels. Unlike
+   * #GdkMonitor:scale-factor it can be fractional, such as 1.25.
+   *
+   * Since: OTK 1
+   */
+  props[PROP_SCALE] =
+    g_param_spec_double ("scale",
+                         "Scale",
+                         "The scale",
+                         1.0, G_MAXDOUBLE, 1.0,
+                         G_PARAM_READABLE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
 
   g_object_class_install_properties (object_class, LAST_PROP, props);
 
@@ -355,13 +395,15 @@ gdk_monitor_get_height_mm (GdkMonitor *monitor)
   return monitor->height_mm;
 }
 
-/*< private >
+/**
  * gdk_monitor_get_connector:
  * @monitor: a #GdkMonitor
  *
- * Gets the name of the monitor's connector, if available.
+ * Gets the name of the monitor's connector, if available, such as
+ * `DP-1`. On X11 this is the RandR monitor or output name.
  *
  * Returns: (transfer none) (nullable): the name of the connector
+ * Since: OTK 1
  */
 const char *
 gdk_monitor_get_connector (GdkMonitor *monitor)
@@ -429,6 +471,26 @@ gdk_monitor_get_scale_factor (GdkMonitor *monitor)
   g_return_val_if_fail (GDK_IS_MONITOR (monitor), 1);
 
   return monitor->scale_factor;
+}
+
+/**
+ * gdk_monitor_get_scale:
+ * @monitor: a #GdkMonitor
+ *
+ * Gets the scale from logical monitor coordinates to device pixels.
+ *
+ * Unlike gdk_monitor_get_scale_factor() this can be fractional. Backends
+ * that only know whole-number scales return the scale factor.
+ *
+ * Returns: the scale
+ * Since: OTK 1
+ */
+double
+gdk_monitor_get_scale (GdkMonitor *monitor)
+{
+  g_return_val_if_fail (GDK_IS_MONITOR (monitor), 1.0);
+
+  return (double) monitor->scale_factor;
 }
 
 /**
@@ -519,10 +581,13 @@ void
 gdk_monitor_set_connector (GdkMonitor *monitor,
                            const char *connector)
 {
+  if (g_strcmp0 (monitor->connector, connector) == 0)
+    return;
+
   g_free (monitor->connector);
   monitor->connector = g_strdup (connector);
 
-  /* g_object_notify (G_OBJECT (monitor), "connector"); */
+  g_object_notify_by_pspec (G_OBJECT (monitor), props[PROP_CONNECTOR]);
 }
 
 void
@@ -601,6 +666,7 @@ gdk_monitor_set_scale_factor (GdkMonitor *monitor,
   monitor->scale_factor = scale_factor;
 
   g_object_notify (G_OBJECT (monitor), "scale-factor");
+  g_object_notify_by_pspec (G_OBJECT (monitor), props[PROP_SCALE]);
 }
 
 void

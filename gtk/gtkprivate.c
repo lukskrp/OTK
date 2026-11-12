@@ -30,6 +30,7 @@
 #include "gdk/gdk.h"
 
 #include "gtkprivate.h"
+#include "gdk/gdk-private.h"
 #include "gtkresources.h"
 
 
@@ -269,9 +270,18 @@ _gtk_ensure_resources (void)
 }
 
 gboolean
+gtk_portals_disabled (void)
+{
+  return GDK_PRIVATE_CALL (gdk_portals_disabled) ();
+}
+
+gboolean
 gtk_should_use_portal (void)
 {
   static const char *use_portal = NULL;
+
+  if (gtk_portals_disabled ())
+    return FALSE;
 
   if (G_UNLIKELY (use_portal == NULL))
     {

@@ -50,6 +50,20 @@ The API starts out identical to GTK 3.24.
   including the automatic initialization on import, so call `Gtk.init(None)` yourself
   before creating any widget. The plain GObject API works.
 
+## Beyond GTK 3
+
+API that OTK adds. It is marked `GDK_AVAILABLE_IN_OTK_1` in the headers and documented
+"Since: OTK 1". Code that also builds against stock GTK 3 can test `#ifdef OTK_API_VERSION`.
+
+| Since | API | What it does |
+|---|---|---|
+| OTK 1 | `gdk_display_get_monitors()` | The display's monitors as a `GListModel` of `GdkMonitor`; emits `items-changed` when a monitor is added or removed, after its properties are set |
+| OTK 1 | `gdk_monitor_get_connector()`, `GdkMonitor:connector` | Connector name, such as `DP-1` (RandR monitor or output name on X11) |
+| OTK 1 | `gdk_monitor_get_scale()`, `GdkMonitor:scale` | Scale from logical to device pixels as a `double`; equals the scale factor until a backend reports fractional scales |
+| OTK 1 | `gtk_disable_portals()` | Call before `gtk_init()`: OTK makes no `org.freedesktop.portal.*` calls (dialogs, inhibit, file transfer, app registration, settings), overriding `GTK_USE_PORTAL` |
+
+These follow the GTK 4 API of the same name, so code moving from GTK 4 keeps working.
+
 ## The ABI policy
 
 OTK may change anything GTK 3 promised stays stable: struct layouts, signatures,

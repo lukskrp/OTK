@@ -60,7 +60,6 @@ void            gdk_monitor_set_model           (GdkMonitor *monitor,
                                                  const char *model);
 void            gdk_monitor_set_connector       (GdkMonitor *monitor,
                                                  const char *connector);
-const char *    gdk_monitor_get_connector       (GdkMonitor *monitor);
 void            gdk_monitor_set_position        (GdkMonitor *monitor,
                                                  int         x,
                                                  int         y);

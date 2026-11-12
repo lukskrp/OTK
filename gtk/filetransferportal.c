@@ -40,6 +40,7 @@
 #endif
 
 #include "filetransferportalprivate.h"
+#include "gtkprivate.h"
 
 static GDBusProxy *file_transfer_proxy = NULL;
 
@@ -464,7 +465,7 @@ file_transfer_portal_register (void)
 {
   static gboolean called;
 
-  if (!called)
+  if (!called && !gtk_portals_disabled ())
     {
       called = TRUE;
 

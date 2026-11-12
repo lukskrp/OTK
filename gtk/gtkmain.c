@@ -392,6 +392,25 @@ check_setugid (void)
 static gboolean do_setlocale = TRUE;
 
 /**
+ * gtk_disable_portals:
+ *
+ * Prevents OTK from using desktop portals (`org.freedesktop.portal.*`):
+ * native dialogs, inhibition, file transfer for drag-and-drop and the
+ * clipboard, application registration and the settings portal. This
+ * overrides `GTK_USE_PORTAL` and sandbox detection.
+ *
+ * Call it before gtk_init(). It is meant for desktop components that
+ * the portals themselves may depend on.
+ *
+ * Since: OTK 1
+ */
+void
+gtk_disable_portals (void)
+{
+  GDK_PRIVATE_CALL (gdk_disable_portals) ();
+}
+
+/**
  * gtk_disable_setlocale:
  * 
  * Prevents gtk_init(), gtk_init_check(), gtk_init_with_args() and

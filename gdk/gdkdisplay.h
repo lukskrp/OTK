@@ -32,6 +32,7 @@
 #include <gdk/gdkdevicemanager.h>
 #include <gdk/gdkseat.h>
 #include <gdk/gdkmonitor.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -184,6 +185,8 @@ int          gdk_display_get_n_monitors        (GdkDisplay *display);
 GDK_AVAILABLE_IN_3_22
 GdkMonitor * gdk_display_get_monitor           (GdkDisplay *display,
                                                 int         monitor_num);
+GDK_AVAILABLE_IN_OTK_1
+GListModel * gdk_display_get_monitors          (GdkDisplay *display);
 GDK_AVAILABLE_IN_3_22
 GdkMonitor * gdk_display_get_primary_monitor   (GdkDisplay *display);
 GDK_AVAILABLE_IN_3_22

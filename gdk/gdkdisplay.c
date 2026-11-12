@@ -370,6 +370,7 @@ gdk_display_finalize (GObject *object)
 
   g_list_free_full (display->input_devices, g_object_unref);
   g_list_free_full (display->seats, g_object_unref);
+  g_clear_object (&display->monitor_model);
 
   if (display->device_manager)
     g_object_unref (display->device_manager);
@@ -2758,10 +2759,76 @@ gdk_display_get_monitor_at_window (GdkDisplay *display,
                                            win.y + win.height / 2);
 }
 
+/**
+ * gdk_display_get_monitors:
+ * @display: a #GdkDisplay
+ *
+ * Gets the monitors of @display as a list model of #GdkMonitor.
+ *
+ * The model stays valid for the lifetime of @display and emits
+ * #GListModel::items-changed whenever a monitor is added or removed, after
+ * the backend has filled in the new monitor's properties.
+ *
+ * Returns: (transfer none): a #GListModel of #GdkMonitor
+ * Since: OTK 1
+ */
+static gboolean
+monitor_model_find (GListStore *store,
+                    GdkMonitor *monitor,
+                    guint      *position)
+{
+  guint i, n = g_list_model_get_n_items (G_LIST_MODEL (store));
+
+  for (i = 0; i < n; i++)
+    {
+      GdkMonitor *item = g_list_model_get_item (G_LIST_MODEL (store), i);
+
+      g_object_unref (item);
+      if (item == monitor)
+        {
+          if (position)
+            *position = i;
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
+GListModel *
+gdk_display_get_monitors (GdkDisplay *display)
+{
+  g_return_val_if_fail (GDK_IS_DISPLAY (display), NULL);
+
+  if (display->monitor_model == NULL)
+    {
+      int i, n;
+
+      display->monitor_model = g_list_store_new (GDK_TYPE_MONITOR);
+
+      n = gdk_display_get_n_monitors (display);
+      for (i = 0; i < n; i++)
+        {
+          GdkMonitor *monitor = gdk_display_get_monitor (display, i);
+
+          if (monitor)
+            g_list_store_append (display->monitor_model, monitor);
+        }
+    }
+
+  return G_LIST_MODEL (display->monitor_model);
+}
+
 void
 gdk_display_monitor_added (GdkDisplay *display,
                            GdkMonitor *monitor)
 {
+  /* A model created while the backend was still adding this monitor
+   * already holds it. */
+  if (display->monitor_model &&
+      !monitor_model_find (display->monitor_model, monitor, NULL))
+    g_list_store_append (display->monitor_model, monitor);
+
   g_signal_emit (display, signals[MONITOR_ADDED], 0, monitor);
 }
 
@@ -2769,6 +2836,16 @@ void
 gdk_display_monitor_removed (GdkDisplay *display,
                              GdkMonitor *monitor)
 {
+  guint position;
+
+  g_object_ref (monitor);
+
+  if (display->monitor_model &&
+      monitor_model_find (display->monitor_model, monitor, &position))
+    g_list_store_remove (display->monitor_model, position);
+
   g_signal_emit (display, signals[MONITOR_REMOVED], 0, monitor);
   gdk_monitor_invalidate (monitor);
+
+  g_object_unref (monitor);
 }
