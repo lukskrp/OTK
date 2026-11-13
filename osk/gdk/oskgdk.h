@@ -14,7 +14,6 @@
 
 #include "gdktypes.h"
 #include "osksurface.h"
-#include "osksnapshot.h"
 #include "gdkenums.h"
 #include "gdkcicpparams.h"
 #include "gdkcolorstate.h"

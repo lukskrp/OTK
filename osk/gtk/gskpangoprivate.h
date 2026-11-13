@@ -20,7 +20,8 @@
 
 #include <pango/pango.h>
 #include "gtk/gtksnapshot.h"
-#include "gtk/gtkcssstyleprivate.h"
+#include "gdk/gdkcolorprivate.h"
+/* OSK: no GTK 4 CSS styles; GtkTextView text shadows are OTK's own business */
 
 G_BEGIN_DECLS
 
@@ -56,10 +57,9 @@ struct _GskPangoRenderer
 {
   PangoRenderer          parent_instance;
 
-  GtkWidget             *widget;
+  gpointer               widget; /* OSK: unused, no GTK 4 widgets */
   GtkSnapshot           *snapshot;
   GdkColor               fg_color;
-  GtkCssStyle           *shadow_style;
 
   /* Error underline color for this widget */
   GdkRGBA               *error_color;

@@ -22,16 +22,10 @@
 #include "gsk/gsk.h"
 #include "gsk/gskrendernodeprivate.h"
 #include "gskpangoprivate.h"
-#include "gtkpangoprivate.h"
 #include "gtksnapshotprivate.h"
-#include "gtktextlayoutprivate.h"
-#include "gtktextviewprivate.h"
-#include "gtkwidgetprivate.h"
-#include "gtkcsscolorvalueprivate.h"
 #include "gdk/gdkrgbaprivate.h"
 #include "gdk/gdkcolorprivate.h"
 #include "gdk/gdkcairoprivate.h"
-#include "gtkcssshadowvalueprivate.h"
 
 #include <math.h>
 
@@ -39,6 +33,19 @@
 #include <cairo.h>
 
 G_DEFINE_TYPE (GskPangoRenderer, gsk_pango_renderer, PANGO_TYPE_RENDERER)
+
+/* OSK: from GTK 4's gtk/gtkpango.c */
+static gboolean
+gtk_pango_glyph_item_has_color_glyphs (PangoGlyphItem *run)
+{
+  for (int i = 0; i < run->glyphs->num_glyphs; i++)
+    {
+      if (run->glyphs->glyphs[i].attr.is_color)
+        return TRUE;
+   }
+
+  return FALSE;
+}
 
 void
 gsk_pango_renderer_set_state (GskPangoRenderer      *crenderer,
@@ -116,7 +123,6 @@ gsk_pango_renderer_draw_glyph_item (PangoRenderer  *renderer,
 {
   GskPangoRenderer *crenderer = (GskPangoRenderer *) (renderer);
   GdkColor text_color;
-  GtkCssValue *text_shadow;
   gboolean has_color_glyphs;
   gboolean has_alpha;
   PangoRenderComponent components;
@@ -132,63 +138,7 @@ gsk_pango_renderer_draw_glyph_item (PangoRenderer  *renderer,
                                       : PANGO_RENDER_COMPONENT_PLAIN_GLYPH)) == 0)
     return;
 
-  if (crenderer->shadow_style)
-    text_shadow = crenderer->shadow_style->used->text_shadow;
-  else
-    text_shadow = NULL;
-
-  if (text_shadow && !gtk_css_shadow_value_is_clear (text_shadow))
-    {
-      graphene_point_t offset;
-      GdkColor color;
-      double radius;
-
-      gtk_css_shadow_value_get_offset (text_shadow, 0, &offset);
-      gtk_css_shadow_value_get_color (text_shadow, 0, &color);
-      radius = gtk_css_shadow_value_get_radius (text_shadow, 0);
-
-      gtk_snapshot_save (crenderer->snapshot);
-      gtk_snapshot_translate (crenderer->snapshot, &offset);
-
-      if (radius != 0)
-        gtk_snapshot_push_blur (crenderer->snapshot, radius);
-
-      if (has_color_glyphs)
-        {
-          GdkColor black = GDK_COLOR_SRGB (0, 0, 0, 1);
-          graphene_rect_t bounds;
-
-          get_item_bounds (glyph_item, &bounds);
-          gtk_snapshot_push_mask (crenderer->snapshot, GSK_MASK_MODE_ALPHA);
-
-          gtk_snapshot_add_text (crenderer->snapshot,
-                                 glyph_item->item->analysis.font,
-                                 glyph_item->glyphs,
-                                 &black,
-                                 (float) x / PANGO_SCALE,
-                                 (float) y / PANGO_SCALE);
-
-          gtk_snapshot_pop (crenderer->snapshot);
-          gtk_snapshot_add_color (crenderer->snapshot, &color, &bounds);
-          gtk_snapshot_pop (crenderer->snapshot);
-          gdk_color_finish (&black);
-        }
-      else
-        {
-          gtk_snapshot_add_text (crenderer->snapshot,
-                                 glyph_item->item->analysis.font,
-                                 glyph_item->glyphs,
-                                 &color,
-                                 (float) x / PANGO_SCALE,
-                                 (float) y / PANGO_SCALE);
-        }
-
-      if (radius != 0)
-        gtk_snapshot_pop (crenderer->snapshot);
-
-      gtk_snapshot_restore (crenderer->snapshot);
-
-    }
+  /* OSK: no CSS text shadows (they come from GTK 4's GtkCssStyle) */
 
   get_color (crenderer, PANGO_RENDER_PART_FOREGROUND, &text_color);
 
@@ -386,125 +336,8 @@ gsk_pango_renderer_draw_shape (PangoRenderer  *renderer,
     }
 }
 
-static void
-text_renderer_set_rgba (GskPangoRenderer *crenderer,
-                        PangoRenderPart   part,
-                        const GdkRGBA    *rgba)
-{
-  PangoRenderer *renderer = PANGO_RENDERER (crenderer);
-  PangoColor color = { 0, };
-  guint16 alpha;
-
-  if (rgba)
-    {
-      color.red = (guint16)(rgba->red * 65535);
-      color.green = (guint16)(rgba->green * 65535);
-      color.blue = (guint16)(rgba->blue * 65535);
-      alpha = (guint16)(rgba->alpha * 65535);
-      pango_renderer_set_color (renderer, part, &color);
-      pango_renderer_set_alpha (renderer, part, alpha);
-    }
-  else
-    {
-      pango_renderer_set_color (renderer, part, NULL);
-      pango_renderer_set_alpha (renderer, part, 0);
-    }
-}
-
-static GtkTextAppearance *
-get_item_appearance (PangoItem *item)
-{
-  GSList *tmp_list = item->analysis.extra_attrs;
-
-  while (tmp_list)
-    {
-      PangoAttribute *attr = tmp_list->data;
-
-      if (attr->klass->type == gtk_text_attr_appearance_type)
-        return &((GtkTextAttrAppearance *)attr)->appearance;
-
-      tmp_list = tmp_list->next;
-    }
-
-  return NULL;
-}
-
-static void
-gsk_pango_renderer_prepare_run (PangoRenderer  *renderer,
-                                PangoLayoutRun *run)
-{
-  GskPangoRenderer *crenderer = GSK_PANGO_RENDERER (renderer);
-  const GdkRGBA *bg_rgba = NULL;
-  const GdkRGBA *fg_rgba = NULL;
-  GtkTextAppearance *appearance;
-
-  PANGO_RENDERER_CLASS (gsk_pango_renderer_parent_class)->prepare_run (renderer, run);
-
-  appearance = get_item_appearance (run->item);
-
-  if (appearance == NULL)
-    return;
-
-  if (appearance->draw_bg && crenderer->state == GSK_PANGO_RENDERER_NORMAL)
-    bg_rgba = appearance->bg_rgba;
-  else
-    bg_rgba = NULL;
-
-  text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_BACKGROUND, bg_rgba);
-
-  if (crenderer->state == GSK_PANGO_RENDERER_SELECTED &&
-      GTK_IS_TEXT_VIEW (crenderer->widget))
-    {
-      GtkCssNode *node;
-      GtkCssStyle *style;
-
-      node = gtk_text_view_get_selection_node ((GtkTextView *)crenderer->widget);
-      style = gtk_css_node_get_style (node);
-      fg_rgba = gtk_css_color_value_get_rgba (style->used->color);
-    }
-  else if (crenderer->state == GSK_PANGO_RENDERER_CURSOR && gtk_widget_has_focus (crenderer->widget))
-    {
-      GtkCssNode *node;
-      GtkCssStyle *style;
-
-      node = gtk_widget_get_css_node (crenderer->widget);
-      style = gtk_css_node_get_style (node);
-      fg_rgba = gtk_css_color_value_get_rgba (style->used->background_color);
-    }
-  else
-    fg_rgba = appearance->fg_rgba;
-
-  text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_FOREGROUND, fg_rgba);
-
-  if (appearance->strikethrough_rgba)
-    text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_STRIKETHROUGH, appearance->strikethrough_rgba);
-  else
-    text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_STRIKETHROUGH, fg_rgba);
-
-  if (appearance->underline_rgba)
-    text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_UNDERLINE, appearance->underline_rgba);
-  else if (appearance->underline == PANGO_UNDERLINE_ERROR)
-    {
-      if (!crenderer->error_color)
-        {
-          static const GdkRGBA red = { 1, 0, 0, 1 };
-          crenderer->error_color = gdk_rgba_copy (&red);
-        }
-
-      text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_UNDERLINE, crenderer->error_color);
-    }
-  else
-    text_renderer_set_rgba (crenderer, PANGO_RENDER_PART_UNDERLINE, fg_rgba);
-
-  crenderer->shadow_style = NULL;
-  if (GTK_IS_TEXT_VIEW (crenderer->widget))
-    {
-      if (crenderer->state == GSK_PANGO_RENDERER_SELECTED)
-        crenderer->shadow_style = gtk_css_node_get_style (gtk_text_view_get_selection_node ((GtkTextView *)crenderer->widget));
-      else if (crenderer->state != GSK_PANGO_RENDERER_CURSOR)
-        crenderer->shadow_style = gtk_css_node_get_style (gtk_widget_get_css_node (crenderer->widget));
-    }
-}
+/* OSK: GTK 4's prepare_run() applies GtkTextView appearance attributes and
+ * selection/cursor colours; OSK has no GtkTextView, so Pango's default is used. */
 
 static void
 gsk_pango_renderer_init (GskPangoRenderer *renderer G_GNUC_UNUSED)
@@ -521,7 +354,6 @@ gsk_pango_renderer_class_init (GskPangoRendererClass *klass)
   renderer_class->draw_trapezoid = gsk_pango_renderer_draw_trapezoid;
   renderer_class->draw_error_underline = gsk_pango_renderer_draw_error_underline;
   renderer_class->draw_shape = gsk_pango_renderer_draw_shape;
-  renderer_class->prepare_run = gsk_pango_renderer_prepare_run;
 }
 
 static GskPangoRenderer *cached_renderer = NULL; /* MT-safe */
@@ -563,7 +395,6 @@ gsk_pango_renderer_release (GskPangoRenderer *renderer)
     {
       renderer->widget = NULL;
       renderer->snapshot = NULL;
-      renderer->shadow_style = NULL;
 
       g_clear_pointer (&renderer->error_color, gdk_rgba_free);
 

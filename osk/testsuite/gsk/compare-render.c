@@ -9,6 +9,8 @@
 static char *arg_output_dir = NULL;
 static int arg_tolerance = 0;
 
+extern void
+replay_node (GskRenderNode *node, GtkSnapshot *snapshot);
 
 static const char *
 get_output_dir (void)
@@ -463,12 +465,28 @@ mask_create_reference (GskRenderer   *renderer,
   return result;
 }
 
-/* OSK: replay needs GtkSnapshot (libotk, OTK milestone 3b); the variant is not run. */
 static GskRenderNode *
 replay_create_test (GskRenderNode *node,
                     gconstpointer  unused)
 {
-  g_assert_not_reached ();
+  GskRenderNode *result;
+  graphene_rect_t node_bounds, result_bounds;
+  GtkSnapshot *snapshot = gtk_snapshot_new ();
+
+  replay_node (node, snapshot);
+  result = gtk_snapshot_free_to_node (snapshot);
+  /* If the whole render node tree got eliminated, make sure we have
+     something to work with nevertheless.  */
+  if (result == NULL)
+    result = gsk_container_node_new (NULL, 0);
+
+  gsk_render_node_get_bounds (node, &node_bounds);
+  gsk_render_node_get_bounds (result, &result_bounds);
+  /* Check that the node didn't grow.  */
+  if (!graphene_rect_contains_rect (&node_bounds, &result_bounds))
+    g_test_fail_printf ("Node bounds grew");
+
+  return result;
 }
 
 static gpointer

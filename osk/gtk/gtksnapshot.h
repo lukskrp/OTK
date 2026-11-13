@@ -25,13 +25,21 @@
 #pragma once
 
 
-#if !defined (__GTK_H_INSIDE__) && !defined (GTK_COMPILATION)
-#error "Only <gtk/gtk.h> can be included directly."
+/* OSK: part of <osk/osk.h> */
+#if !defined (__OSK_H_INSIDE__) && !defined (GTK_COMPILATION)
+#error "Only <osk/osk.h> can be included directly."
 #endif
 
+#include <gdk/oskgdk.h>
 #include <gsk/gsk.h>
 
-#include <gtk/gtktypes.h>
+/* OSK: GTK 4's gtktypes.h is not imported.  GtkSnapshot is GdkSnapshot, as in
+ * GTK 4; OTK's <gtk/gtkwidget.h> declares the same typedef for
+ * GtkWidgetClass.snapshot. */
+#ifndef __OSK_GTK_SNAPSHOT_TYPEDEF__
+#define __OSK_GTK_SNAPSHOT_TYPEDEF__
+typedef struct _GdkSnapshot GtkSnapshot;
+#endif
 
 G_BEGIN_DECLS
 

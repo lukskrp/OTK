@@ -29,15 +29,11 @@
  * The subclass of `GdkSnapshot` used by GTK is [GtkSnapshot](../gtk4/class.Snapshot.html).
  */
 
-G_DEFINE_ABSTRACT_TYPE (GdkSnapshot, gdk_snapshot, G_TYPE_OBJECT)
+/* OSK: one type with GtkSnapshot (see gtk/gtksnapshot.c) */
+GType gtk_snapshot_get_type (void);
 
-static void
-gdk_snapshot_class_init (GdkSnapshotClass *klass)
+GType
+gdk_snapshot_get_type (void)
 {
+  return gtk_snapshot_get_type ();
 }
-
-static void
-gdk_snapshot_init (GdkSnapshot *self)
-{
-}
-

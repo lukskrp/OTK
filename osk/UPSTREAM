@@ -6,18 +6,18 @@ OSK (osk/) is GTK 4's rendering engine as an OTK module.  Imported from GTK 4.24
   https://download.gnome.org/sources/gtk/4.24/gtk-4.24.0.tar.xz
   sha256 28ba4ac1c04f86eac09b79a163cb163a4c2b54442d9f7eccc04679062a581044
 
-The commit "osk: import GTK 4.24.0 rendering engine" adds the imported files
-unmodified, at the same paths as in GTK (osk/gsk/... is GTK's gsk/...).  Every OSK
-change is a later commit, so
+The commits "osk: import GTK 4.24.0 rendering engine" and "osk: import GtkSnapshot
+from GTK 4.24.0" add the imported files unmodified, at the same paths as in GTK
+(osk/gsk/... is GTK's gsk/...).  Every OSK change is a later commit, so
 
-  git diff <import commit> -- osk/
+  git diff <GtkSnapshot import commit> -- osk/
 
 shows what OSK changed.  To take a newer GTK: copy the same files from the new
-release onto the import commit's tree in a branch, commit, and merge that branch.
+release onto the import commits' tree in a branch, commit, and merge that branch.
 
 OSK-specific changes in imported files are marked "OSK:" in comments.
 
-Imported files (1055, 86062 lines of C including tests; test data under testsuite/; 44 changed by OSK, marked *):
+Imported files (1063, 91935 lines of C including tests; test data under testsuite/; 50 changed by OSK, marked *):
     gdk/gdkarrayimpl.c
   * gdk/gdkcairoprivate.h
     gdk/gdkcicpparams.c
@@ -55,7 +55,7 @@ Imported files (1055, 86062 lines of C including tests; test data under testsuit
     gdk/gdkrectangleprivate.h
   * gdk/gdkrgba.c
     gdk/gdkrgbaprivate.h
-    gdk/gdksnapshot.c
+  * gdk/gdksnapshot.c
   * gdk/gdksnapshot.h
     gdk/gdksnapshotprivate.h
     gdk/gdkswizzleprivate.h
@@ -268,10 +268,17 @@ Imported files (1055, 86062 lines of C including tests; test data under testsuit
     gtk/css/gtkcsstokenizerprivate.h
     gtk/css/gtkcssvariablevalue.c
   * gtk/css/gtkcssvariablevalueprivate.h
+  * gtk/gskpango.c
+  * gtk/gskpangoprivate.h
     gtk/gtkcolorutils.c
   * gtk/gtkcolorutils.h
     gtk/gtkcolorutilsprivate.h
     gtk/gtkpopcountprivate.h
+    gtk/gtkrendernodepaintable.c
+    gtk/gtkrendernodepaintableprivate.h
+  * gtk/gtksnapshot.c
+  * gtk/gtksnapshot.h
+    gtk/gtksnapshotprivate.h
     testsuite/diff/README.md
     testsuite/diff/diff.h
     testsuite/diff/diffreg.c
@@ -1068,13 +1075,14 @@ Imported files (1055, 86062 lines of C including tests; test data under testsuit
     testsuite/gsk/nodeparser/turbulence.ref.node
     testsuite/gsk/nodeparser/widgetfactory.node
     testsuite/gsk/nodeparser/widgetfactory.ref.node
+  * testsuite/gsk/replay-node.c
   * testsuite/gsk/serialize.c
     testsuite/reftests/reftest-compare.c
   * testsuite/reftests/reftest-compare.h
   * testsuite/testutils.c
     testsuite/testutils.h
 
-OSK's own files (30); those with GTK 4 names stand in for GTK 4 files OSK does
+OSK's own files (28); those with GTK 4 names stand in for GTK 4 files OSK does
 not import, because ODK already has them or because the feature comes later:
     config/meson.build
     gdk/gdkconfig.h   (stand-in)
@@ -1092,8 +1100,6 @@ not import, because ODK already has them or because the feature comes later:
     gdk/oskdmabuf.c
     gdk/oskgdk.h
     gdk/oskprivate.h
-    gdk/osksnapshot.c
-    gdk/osksnapshot.h
     gdk/osksubsurface.c
     gdk/osksurface.h
     gdk/version/gdkversionmacros.h   (stand-in)

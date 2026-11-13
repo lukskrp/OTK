@@ -20,9 +20,7 @@
 #include "gtksnapshot.h"
 #include "gtksnapshotprivate.h"
 
-#include "gtkcsscolorvalueprivate.h"
-#include "gtkcssshadowvalueprivate.h"
-#include "gtkdebug.h"
+/* OSK: GTK 4's CSS values and gtkdebug.h are not used here */
 #include "gtkrendernodepaintableprivate.h"
 #include "gsktransformprivate.h"
 
@@ -54,6 +52,23 @@
 #include "gsk/gskrectprivate.h"
 
 #include "gtk/gskpangoprivate.h"
+
+#include <string.h>
+
+/* OSK: GTK_DEBUG=snapshot turns on debug nodes, as in GTK 4 */
+static gboolean
+osk_debug_snapshot (void)
+{
+  static int enabled = -1;
+
+  if (enabled < 0)
+    {
+      const char *env = g_getenv ("GTK_DEBUG");
+      enabled = env != NULL && (strstr (env, "snapshot") != NULL || strstr (env, "all") != NULL);
+    }
+
+  return enabled;
+}
 
 #define GDK_ARRAY_NAME gtk_snapshot_nodes
 #define GDK_ARRAY_TYPE_NAME GtkSnapshotNodes
@@ -236,7 +251,10 @@ struct _GtkSnapshotClass {
   GObjectClass           parent_class; /* it's really GdkSnapshotClass, but don't tell anyone! */
 };
 
-G_DEFINE_TYPE (GtkSnapshot, gtk_snapshot, GDK_TYPE_SNAPSHOT)
+/* OSK: GdkSnapshot and GtkSnapshot are one type.  GTK 4 splits them so that
+ * GDK does not depend on GTK; in OSK both live in libosk, and
+ * gdk_snapshot_get_type() returns this type (gdk/gdksnapshot.c). */
+G_DEFINE_TYPE (GtkSnapshot, gtk_snapshot, G_TYPE_OBJECT)
 
 static void
 gtk_snapshot_dispose (GObject *object)
@@ -515,7 +533,7 @@ gtk_snapshot_push_debug (GtkSnapshot *snapshot,
 {
   GtkSnapshotState *current_state = gtk_snapshot_get_current_state (snapshot);
 
-  if (GTK_DEBUG_CHECK (SNAPSHOT))
+  if (osk_debug_snapshot ())
     {
       va_list args;
       GtkSnapshotState *state;

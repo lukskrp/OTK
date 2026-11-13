@@ -2,6 +2,7 @@
 # (libosk-3, pkg-config osk-3.0, typelib Osk-3.0).  See osk/UPSTREAM and OTK.md.
 
 osk_api_version = '3.0'
+osk_enabled = false
 
 graphene_dep = dependency('graphene-gobject-1.0', version: '>= 1.10.0', required: get_option('osk'))
 png_dep = dependency('libpng', required: get_option('osk'))
@@ -104,7 +105,6 @@ osk_sources = files([
   'gdk/gdkhsla.c',
   'gdk/osksubsurface.c',
   'gdk/oskdebug.c',
-  'gdk/osksnapshot.c',
   'gdk/oskdmabuf.c',
   'gdk/loaders/gdkjpeg.c',
   'gdk/loaders/gdktiff.c',
@@ -128,6 +128,9 @@ osk_sources = files([
   'gtk/css/gtkcsstokenizer.c',
   'gtk/css/gtkcssvariablevalue.c',
   'gtk/gtkcolorutils.c',
+  'gtk/gtksnapshot.c',
+  'gtk/gtkrendernodepaintable.c',
+  'gtk/gskpango.c',
 ])
 
 osk_gsk_public_headers = files([
@@ -183,6 +186,10 @@ osk_gsk_public_headers = files([
   'gsk/gsktypes.h',
 ])
 
+osk_gtk_public_headers = files([
+  'gtk/gtksnapshot.h',
+])
+
 osk_gdk_public_headers = files([
   'gdk/gdkcicpparams.h',
   'gdk/gdkcolorstate.h',
@@ -195,7 +202,6 @@ osk_gdk_public_headers = files([
   'gdk/gdktypes.h',
   'gdk/oskgdk.h',
   'gdk/osksurface.h',
-  'gdk/osksnapshot.h',
 ])
 
 subdir('gsk')
@@ -218,7 +224,7 @@ osk_cflags = [
 
 # Search order: OSK's generated files, then ODK (<gdk/gdk.h> is ODK's), then
 # OSK's sources.  Quoted includes find a header next to the including file first.
-osk_inc = include_directories('.', 'gdk', 'gsk', 'gtk/css')
+osk_inc = include_directories('.', 'gdk', 'gsk', 'gtk', 'gtk/css')
 osk_deps = [osk_glib_dep, osk_gio_dep, hb_subset_dep, cairogobj_dep, osk_pangoft_dep, osk_csi_dep, graphene_dep, png_dep, tiff_dep, jpeg_dep, pixbuf_dep, pango_dep, pangocairo_dep, cairo_dep, epoxy_dep, libm]
 
 libosk_f16c = static_library('osk_f16c',
@@ -229,13 +235,23 @@ libosk_f16c = static_library('osk_f16c',
   implicit_include_directories: false,
 )
 
-libosk = library('osk-3',
+# Compiled once; libosk-3.so links all of it, and tests that use OSK's private
+# API (GTK 4's replay test) link the static library, as GTK 4's tests do.
+libosk_static = static_library('osk-3-static',
   sources: [osk_sources, osk_gsk_enums, osk_gdk_enums, osk_css_enums],
   dependencies: osk_deps,
   include_directories: [osk_config_inc, confinc, osk_inc],
   c_args: osk_cflags,
   implicit_include_directories: false,
-  link_with: [libgdk, libosk_f16c],
+  link_with: [libosk_f16c],
+  pic: true,
+)
+
+libosk = library('osk-3',
+  dependencies: osk_deps,
+  include_directories: [osk_config_inc, confinc, osk_inc],  # for the GIR scanner
+  link_whole: [libosk_static],
+  link_with: [libgdk],
   soversion: gtk_soversion,
   version: gtk_library_version,
   install: true,
@@ -244,6 +260,7 @@ libosk = library('osk-3',
 install_headers('osk.h', subdir: 'otk-3.0/osk/osk')
 install_headers(osk_gsk_public_headers, 'gsk/gsk.h', subdir: 'otk-3.0/osk/gsk')
 install_headers(osk_gdk_public_headers, subdir: 'otk-3.0/osk/gdk')
+install_headers(osk_gtk_public_headers, subdir: 'otk-3.0/osk/gtk')
 install_headers('gdk/version/gdkversionmacros.h', subdir: 'otk-3.0/osk/gdk/version')
 
 libosk_dep = declare_dependency(
@@ -251,6 +268,14 @@ libosk_dep = declare_dependency(
   sources: [osk_gsk_enums[1], osk_gdk_enums[1]],
   include_directories: [confinc, osk_inc],
   dependencies: osk_deps,
+)
+
+libosk_static_dep = declare_dependency(
+  link_with: [libosk_static, libgdk],
+  sources: [osk_gsk_enums[1], osk_gdk_enums[1]],
+  include_directories: [osk_config_inc, confinc, osk_inc],
+  dependencies: osk_deps,
+  compile_args: osk_cflags,
 )
 
 import('pkgconfig').generate(
@@ -267,11 +292,11 @@ import('pkgconfig').generate(
 
 if build_gir
   osk_gir = gnome.generate_gir(libosk,
-    sources: [osk_gsk_public_headers, osk_gdk_public_headers, osk_sources, osk_gsk_enums, osk_gdk_enums],
+    sources: [osk_gsk_public_headers, osk_gdk_public_headers, osk_gtk_public_headers, osk_sources, osk_gsk_enums, osk_gdk_enums],
     namespace: 'Osk',
     nsversion: osk_api_version,
-    identifier_prefix: ['Gsk', 'Gdk', 'Osk'],
-    symbol_prefix: ['gsk', 'gdk', 'osk'],
+    identifier_prefix: ['Gsk', 'Gdk', 'Gtk', 'Osk'],
+    symbol_prefix: ['gsk', 'gdk', 'gtk', 'osk'],
     export_packages: 'osk-3.0',
     includes: [gdk_gir[0], 'Graphene-1.0', 'cairo-1.0', 'Pango-1.0', 'Gio-2.0'],
     header: 'osk/osk.h',

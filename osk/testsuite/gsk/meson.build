@@ -1,6 +1,5 @@
 # GTK 4.24.0's GSK tests (testsuite/gsk/meson.build) against OSK.
-# OSK has the Cairo renderer only so far (the GL renderer is OTK milestone 3c),
-# and no GtkSnapshot yet (3b), so the "replay" variant is not run.
+# OSK has the Cairo renderer only so far (the GL renderer is OTK milestone 3c).
 # The test lists below are GTK's, unchanged.
 
 compare_render_tests = [
@@ -539,6 +538,7 @@ variants = {
   'rotate': '--rotate',
   'repeat': '--repeat',
   'mask': '--mask',
+  'replay': '--replay',
   'clip': '--clip',
   'colorflip': '--colorflip',
   'opaque': '--opaque',

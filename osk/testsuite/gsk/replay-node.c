@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <osk/osk.h> /* OSK: was <gtk/gtk.h> */
 #include <gtk/gtksnapshotprivate.h>
 #include <gsk/gskarithmeticnodeprivate.h>
 #include <gsk/gskblendnodeprivate.h>

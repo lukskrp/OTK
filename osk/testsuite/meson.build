@@ -10,8 +10,8 @@ osk_testutils = static_library('osk-testutils', 'testutils.c', 'diff/diffreg.c',
 )
 
 osk_compare_render = executable('osk-compare-render',
-  'gsk/compare-render.c', 'reftests/reftest-compare.c',
-  dependencies: libosk_dep,
+  'gsk/compare-render.c', 'gsk/replay-node.c', 'reftests/reftest-compare.c',
+  dependencies: libosk_static_dep,
   include_directories: [osk_config_inc],
   c_args: osk_test_cflags,
 )

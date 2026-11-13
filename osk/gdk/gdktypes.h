@@ -29,6 +29,11 @@ typedef struct _GdkCicpParams         GdkCicpParams;
 typedef struct _GdkColorState         GdkColorState;
 typedef struct _GdkTexture            GdkTexture;
 typedef struct _GdkTextureDownloader  GdkTextureDownloader;
+#ifdef __GI_SCANNER__
+/* OSK: GdkSnapshot is GtkSnapshot (one GType); introspection sees Osk.Snapshot once */
+#define GdkSnapshot GtkSnapshot
+#define __OSK_GTK_SNAPSHOT_TYPEDEF__
+#endif
 typedef struct _GdkSnapshot           GdkSnapshot;
 typedef struct _GdkPaintable          GdkPaintable;
 typedef struct _GdkDmabufFormats      GdkDmabufFormats;
