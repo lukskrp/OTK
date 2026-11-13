@@ -46,7 +46,10 @@ static inline void
 _gdk_color_init_from_rgba (GdkColor      *self,
                            const GdkRGBA *rgba)
 {
-  _gdk_color_init (self, GDK_COLOR_STATE_SRGB, (const float *) rgba);
+  /* OSK: ODK's GdkRGBA has double components */
+  const float values[4] = { rgba->red, rgba->green, rgba->blue, rgba->alpha };
+
+  _gdk_color_init (self, GDK_COLOR_STATE_SRGB, values);
 }
 
 #define gdk_color_finish(self) _gdk_color_finish ((self))

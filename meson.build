@@ -854,6 +854,7 @@ build_gir = gir.found() and get_option('introspection')
 
 subdir('gdk')
 subdir('gtk')
+subdir('osk')
 subdir('modules')
 subdir('libgail-util')
 if get_option('demos')

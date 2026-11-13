@@ -5450,7 +5450,9 @@ print_color (Printer        *p,
       round (CLAMP (color->green, 0, 1) * 255) == color->green * 255 &&
       round (CLAMP (color->blue, 0, 1) * 255) == color->blue * 255)
     {
-      gdk_rgba_print ((const GdkRGBA *) color->values, p->str);
+      GdkRGBA rgba;
+
+      gdk_rgba_print (osk_rgba_from_floats (color->values, &rgba), p->str);
     }
   else
     {
@@ -5993,6 +5995,7 @@ append_memory_texture (Printer    *p,
   g_string_append_printf (p->str, "}\n");
 }
 
+#ifdef HAVE_DMABUF /* OSK: no dmabuf textures yet */
 static void
 append_dmabuf_texture (Printer    *p,
                        GdkTexture *texture)
@@ -6090,6 +6093,7 @@ append_dmabuf_texture (Printer    *p,
 
   g_bytes_unref (bytes);
 }
+#endif /* HAVE_DMABUF: append_dmabuf_texture */
 
 #ifdef GDK_WINDOWING_WIN32
 static void
@@ -6166,10 +6170,12 @@ append_texture_param (Printer    *p,
     {
       append_memory_texture (p, texture);
     }
+#ifdef HAVE_DMABUF /* OSK */
   else if (GDK_IS_DMABUF_TEXTURE (texture))
     {
       append_dmabuf_texture (p, texture);
     }
+#endif
 #ifdef GDK_WINDOWING_WIN32
   else if (GDK_IS_D3D12_TEXTURE (texture))
     {

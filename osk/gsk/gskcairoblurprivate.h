@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 #include <cairo.h>
 #include "gdkcolorprivate.h"
 

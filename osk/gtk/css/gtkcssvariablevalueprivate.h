@@ -20,6 +20,7 @@
 #pragma once
 
 #include "gtkcss.h"
+#include "gtkcsssection.h" /* OSK: not in gtkcss.h, see there */
 #include "gtkcsstokenizerprivate.h"
 
 G_BEGIN_DECLS

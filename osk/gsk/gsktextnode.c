@@ -43,6 +43,7 @@ struct _GskTextNode
   cairo_hint_style_t hint_style;
 
   GdkColor color;
+  GdkRGBA rgba; /* OSK: GdkRGBA copy of color, see osk_rgba_from_floats() */
   graphene_point_t offset;
 
   guint num_glyphs;
@@ -305,7 +306,7 @@ gsk_text_node_get_color (const GskRenderNode *node)
   const GskTextNode *self = (const GskTextNode *) node;
 
   /* NOTE: This is only correct for nodes with sRGB colors */
-  return (const GdkRGBA *) self->color.values;
+  return osk_rgba_from_floats (self->color.values, &self->rgba);
 }
 
 /*< private >

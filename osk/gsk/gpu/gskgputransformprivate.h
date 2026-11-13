@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 #include <gsk/gsktypes.h>
 #include <graphene.h>
 

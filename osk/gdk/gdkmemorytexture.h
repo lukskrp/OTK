@@ -23,7 +23,7 @@
 #error "Only <gdk/gdk.h> can be included directly."
 #endif
 
-#include <gdk/gdktypes.h>
+#include "gdktypes.h"
 #include <gdk/gdktexture.h>
 
 G_BEGIN_DECLS

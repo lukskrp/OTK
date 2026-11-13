@@ -31,6 +31,10 @@ option('gtk_doc', type: 'boolean', value: 'false',
   description : 'Build API reference with gtk-doc')
 option('man', type: 'boolean', value: 'false',
   description : 'Build man pages for installed tools')
+option('osk', type: 'feature', value: 'auto',
+  description : 'Build OSK, the Ocimum Scene Kit (GTK 4 rendering engine module)')
+option('osk_tests', type: 'boolean', value: true,
+  description : 'Build OSK\'s tests (GTK 4\'s GSK tests; they run without a display)')
 option('introspection', type: 'boolean', value: 'true',
   description : 'Build introspection data (requires gobject-introspection)')
 

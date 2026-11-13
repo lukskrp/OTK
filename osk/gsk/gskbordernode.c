@@ -316,7 +316,12 @@ gsk_border_node_get_colors (const GskRenderNode *node)
     {
       self->border_rgba = g_new (GdkRGBA, 4);
       for (int i = 0; i < 4; i++)
-        gdk_color_to_float (&self->border_color[i], GDK_COLOR_STATE_SRGB, (float *) &self->border_rgba[i]);
+        {
+          float values[4];
+
+          gdk_color_to_float (&self->border_color[i], GDK_COLOR_STATE_SRGB, values);
+          osk_rgba_from_floats (values, &self->border_rgba[i]);
+        }
     }
 
   colors = self->border_rgba;

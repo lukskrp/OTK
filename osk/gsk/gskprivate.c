@@ -1,6 +1,5 @@
 #include "config.h"
 
-#include "gskresources.h"
 #include "gskprivate.h"
 
 #include <cairo.h>
@@ -13,7 +12,7 @@
 static gpointer
 register_resources (gpointer data)
 {
-  _gsk_register_resource ();
+  /* OSK: no resources until the GPU renderer's shaders (OTK milestone 3c). */
   return NULL;
 }
 

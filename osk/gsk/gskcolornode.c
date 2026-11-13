@@ -36,6 +36,7 @@ struct _GskColorNode
 {
   GskRenderNode render_node;
   GdkColor color;
+  GdkRGBA rgba; /* OSK: GdkRGBA copy of color, see osk_rgba_from_floats() */
   GskRectSnap snap;
 };
 
@@ -147,7 +148,7 @@ gsk_color_node_get_color (const GskRenderNode *node)
   g_return_val_if_fail (GSK_IS_RENDER_NODE_TYPE (node, GSK_COLOR_NODE), NULL);
 
   /* NOTE: This is only correct for nodes with sRGB colors */
-  return (const GdkRGBA *) &self->color.values;
+  return osk_rgba_from_floats (self->color.values, &self->rgba);
 }
 
 /*< private >

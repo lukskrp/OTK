@@ -267,7 +267,9 @@ gdk_color_print (const GdkColor *self,
 {
   if (gdk_color_state_equal (self->color_state, GDK_COLOR_STATE_SRGB))
     {
-      gdk_rgba_print ((const GdkRGBA *) self->values, string);
+      GdkRGBA rgba;
+
+      gdk_rgba_print (osk_rgba_from_floats (self->values, &rgba), string);
     }
   else
     {

@@ -39,39 +39,27 @@ G_BEGIN_DECLS
  */
 typedef struct _GtkCssSection GtkCssSection;
 
-GDK_AVAILABLE_IN_ALL
 GType              gtk_css_section_get_type            (void);
 
-GDK_AVAILABLE_IN_ALL
 GtkCssSection *    gtk_css_section_new                 (GFile                *file,
                                                         const GtkCssLocation *start,
                                                         const GtkCssLocation *end);
-GDK_AVAILABLE_IN_4_16
 GtkCssSection *    gtk_css_section_new_with_bytes      (GFile                *file,
                                                         GBytes               *bytes,
                                                         const GtkCssLocation *start,
                                                         const GtkCssLocation *end);
-GDK_AVAILABLE_IN_ALL
 GtkCssSection *    gtk_css_section_ref                 (GtkCssSection        *section);
-GDK_AVAILABLE_IN_ALL
 void               gtk_css_section_unref               (GtkCssSection        *section);
 
-GDK_AVAILABLE_IN_ALL
 void               gtk_css_section_print               (const GtkCssSection  *section,
                                                         GString              *string);
-GDK_AVAILABLE_IN_ALL
 char *             gtk_css_section_to_string           (const GtkCssSection  *section);
 
-GDK_AVAILABLE_IN_ALL
 GtkCssSection *    gtk_css_section_get_parent          (const GtkCssSection  *section);
-GDK_AVAILABLE_IN_ALL
 GFile *            gtk_css_section_get_file            (const GtkCssSection  *section);
-GDK_AVAILABLE_IN_4_16
 GBytes *           gtk_css_section_get_bytes           (const GtkCssSection  *section);
-GDK_AVAILABLE_IN_ALL
 const GtkCssLocation *
                    gtk_css_section_get_start_location  (const GtkCssSection  *section);
-GDK_AVAILABLE_IN_ALL
 const GtkCssLocation *
                    gtk_css_section_get_end_location    (const GtkCssSection  *section);
 

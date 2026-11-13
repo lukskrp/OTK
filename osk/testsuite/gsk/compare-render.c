@@ -1,7 +1,7 @@
 #include "config.h"
 #include <string.h>
 #include <glib/gstdio.h>
-#include <gtk/gtk.h>
+#include <osk/osk.h>
 #include <stdlib.h>
 #include "../reftests/reftest-compare.h"
 
@@ -9,8 +9,6 @@
 static char *arg_output_dir = NULL;
 static int arg_tolerance = 0;
 
-extern void
-replay_node (GskRenderNode *node, GtkSnapshot *snapshot);
 
 static const char *
 get_output_dir (void)
@@ -465,28 +463,12 @@ mask_create_reference (GskRenderer   *renderer,
   return result;
 }
 
+/* OSK: replay needs GtkSnapshot (libotk, OTK milestone 3b); the variant is not run. */
 static GskRenderNode *
 replay_create_test (GskRenderNode *node,
                     gconstpointer  unused)
 {
-  GskRenderNode *result;
-  graphene_rect_t node_bounds, result_bounds;
-  GtkSnapshot *snapshot = gtk_snapshot_new ();
-
-  replay_node (node, snapshot);
-  result = gtk_snapshot_free_to_node (snapshot);
-  /* If the whole render node tree got eliminated, make sure we have
-     something to work with nevertheless.  */
-  if (result == NULL)
-    result = gsk_container_node_new (NULL, 0);
-
-  gsk_render_node_get_bounds (node, &node_bounds);
-  gsk_render_node_get_bounds (result, &result_bounds);
-  /* Check that the node didn't grow.  */
-  if (!graphene_rect_contains_rect (&node_bounds, &result_bounds))
-    g_test_fail_printf ("Node bounds grew");
-
-  return result;
+  g_assert_not_reached ();
 }
 
 static gpointer
@@ -896,8 +878,11 @@ run_node_test (gconstpointer data)
   g_print ("Node file: '%s'\n", test->node_file);
   g_print ("PNG file: '%s'\n", test->png_file);
 
-  window = gdk_surface_new_toplevel (gdk_display_get_default());
-  renderer = gsk_renderer_new_for_surface (window);
+  /* OSK: render to textures with the Cairo renderer; no window needed */
+  window = NULL;
+  renderer = gsk_cairo_renderer_new ();
+  if (!gsk_renderer_realize (renderer, window, &error))
+    g_error ("Could not realize the renderer: %s", error->message);
 
   /* Load the render node from the given .node file */
   node = load_node_file (test->node_file);
@@ -927,7 +912,6 @@ run_node_test (gconstpointer data)
   gsk_render_node_unref (node);
   gsk_renderer_unrealize (renderer);
   g_object_unref (renderer);
-  gdk_surface_destroy (window);
 }
 
 int
@@ -982,7 +966,6 @@ main (int argc, char **argv)
   if (i >= G_N_ELEMENTS (test_enabled))
     test_enabled[0] = TRUE;
 
-  gtk_init ();
 
   test = g_new0 (TestData, 1);
   test->node_file = g_canonicalize_filename (argv[1], NULL);

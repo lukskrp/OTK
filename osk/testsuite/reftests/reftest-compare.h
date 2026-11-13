@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <gtk/gtk.h>
+#include <osk/osk.h>
 
 G_BEGIN_DECLS
 

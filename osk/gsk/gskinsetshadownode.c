@@ -38,6 +38,7 @@ struct _GskInsetShadowNode
 
   GskRoundedRect outline;
   GdkColor color;
+  GdkRGBA rgba; /* OSK: GdkRGBA copy of color, see osk_rgba_from_floats() */
   graphene_point_t offset;
   float spread;
   float blur_radius;
@@ -317,7 +318,7 @@ gsk_inset_shadow_node_get_color (const GskRenderNode *node)
   const GskInsetShadowNode *self = (const GskInsetShadowNode *) node;
 
   /* NOTE: This is only correct for nodes with sRGB colors */
-  return (const GdkRGBA *) &self->color.values;
+  return osk_rgba_from_floats (self->color.values, &self->rgba);
 }
 
 /*< private >

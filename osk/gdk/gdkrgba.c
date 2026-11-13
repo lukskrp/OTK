@@ -32,6 +32,7 @@
 
 #include "gdkhslaprivate.h"
 
+#if 0 /* OSK: ODK defines the public GdkRGBA API (gdk/gdkrgba.c) */
 G_DEFINE_BOXED_TYPE (GdkRGBA, gdk_rgba,
                      gdk_rgba_copy, gdk_rgba_free)
 
@@ -414,6 +415,8 @@ gdk_rgba_to_string (const GdkRGBA *rgba)
   return g_string_free (gdk_rgba_print (rgba, g_string_new ("")), FALSE);
 }
 
+#endif
+
 /**
  * gdk_rgba_print:
  * @rgba: a `GdkRGBA`
@@ -456,7 +459,7 @@ gdk_rgba_print (const GdkRGBA *rgba,
 
 static gboolean
 parse_color_channel_value (GtkCssParser *parser,
-                           float        *value,
+                           double       *value, /* OSK: GdkRGBA is ODK's */
                            gboolean      is_percentage)
 {
   double dvalue;

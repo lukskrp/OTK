@@ -19,7 +19,7 @@
 
 #define __GSK_H_INSIDE__
 
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 
 #include <gsk/gskblendnode.h>
 #include <gsk/gskblurnode.h>
@@ -70,8 +70,7 @@
 #include <gsk/gskglshader.h>
 
 #include <gsk/gskcairorenderer.h>
-#include <gsk/gpu/gskvulkanrenderer.h>
-#include <gsk/gpu/gskglrenderer.h>
+/* OSK: the GPU renderers (gsk/gpu/) arrive in OTK milestone 3c. */
 
 #include <gsk/gsktypes.h>
 #include <gsk/gskenumtypes.h>

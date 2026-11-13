@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#include <gtk/gtk.h>
+#include <osk/osk.h>
 
 #include "../testutils.h"
 
@@ -282,7 +282,7 @@ main (int argc, char **argv)
       const char *basedir;
       GFile *dir;
 
-      gtk_test_init (&argc, &argv);
+      g_test_init (&argc, &argv, NULL);
 
       basedir = g_test_get_dir (G_TEST_DIST);
       dir = g_file_new_for_path (basedir);
@@ -296,7 +296,6 @@ main (int argc, char **argv)
         {
           GFile *file = g_file_new_for_commandline_arg (argv[2]);
 
-          gtk_init ();
 
           success = parse_node_file (file, TRUE);
 
@@ -309,7 +308,7 @@ main (int argc, char **argv)
     {
       guint i;
 
-      gtk_test_init (&argc, &argv);
+      g_test_init (&argc, &argv, NULL);
 
       success = TRUE;
 

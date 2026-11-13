@@ -12,6 +12,9 @@
 #include <graphene.h>
 #include <math.h>
 
+/* OSK: ODK exports a deprecated gdk_cairo_set_source_color() of its own. */
+#define gdk_cairo_set_source_color osk_cairo_set_source_color
+
 static inline cairo_format_t
 gdk_cairo_format_for_depth (GdkMemoryDepth depth)
 {

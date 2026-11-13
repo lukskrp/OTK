@@ -37,18 +37,15 @@
 #include "gskcairorenderer.h"
 #include "gskdebugprivate.h"
 #include "gskrendernodeprivate.h"
-#include "gskoffloadprivate.h"
 
 #include "gskenumtypes.h"
 
-#include "gpu/gskglrenderer.h"
-#include "gpu/gskvulkanrenderer.h"
-#include "gdk/gdkvulkancontextprivate.h"
-#include "gdk/gdkdisplayprivate.h"
+/* OSK: the GPU renderers (gpu/) arrive in OTK milestone 3c; until then the
+ * Cairo renderer is the only one, and OSK_HAVE_GPU_RENDERER is not defined. */
 
 #include <graphene-gobject.h>
 #include <cairo-gobject.h>
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 #include "gdk/gdkdebugprivate.h"
 
 #ifdef GDK_WINDOWING_BROADWAY
@@ -441,7 +438,6 @@ gsk_renderer_render (GskRenderer          *renderer,
   GskRendererPrivate *priv = gsk_renderer_get_instance_private (renderer);
   GskRendererClass *renderer_class;
   cairo_region_t *clip;
-  GskOffload *offload;
 
   g_return_if_fail (GSK_IS_RENDERER (renderer));
   g_return_if_fail (priv->is_realized);
@@ -453,11 +449,6 @@ gsk_renderer_render (GskRenderer          *renderer,
   renderer_class = GSK_RENDERER_GET_CLASS (renderer);
 
   clip = cairo_region_copy (region);
-
-  if (renderer_class->supports_offload && gdk_has_feature (GDK_FEATURE_OFFLOAD))
-    offload = gsk_offload_new (priv->surface, root, clip);
-  else
-    offload = NULL;
 
   if (region == NULL || priv->prev_node == NULL || GSK_RENDERER_DEBUG_CHECK (renderer, FULL_REDRAW))
     {
@@ -477,7 +468,6 @@ gsk_renderer_render (GskRenderer          *renderer,
 
   g_clear_pointer (&priv->prev_node, gsk_render_node_unref);
   cairo_region_destroy (clip);
-  g_clear_pointer (&offload, gsk_offload_free);
   priv->prev_node = gsk_render_node_ref (root);
 }
 
@@ -492,6 +482,7 @@ get_renderer_for_name (const char *renderer_name)
 #endif
   else if (g_ascii_strcasecmp (renderer_name, "cairo") == 0)
     return GSK_TYPE_CAIRO_RENDERER;
+#ifdef OSK_HAVE_GPU_RENDERER
   else if (g_ascii_strcasecmp (renderer_name, "gl") == 0 ||
            g_ascii_strcasecmp (renderer_name, "opengl") == 0)
     return GSK_TYPE_GL_RENDERER;
@@ -500,6 +491,15 @@ get_renderer_for_name (const char *renderer_name)
       g_warning ("The new GL renderer has been renamed to gl. Try GSK_RENDERER=help");
       return GSK_TYPE_GL_RENDERER;
     }
+#else
+  else if (g_ascii_strcasecmp (renderer_name, "gl") == 0 ||
+           g_ascii_strcasecmp (renderer_name, "opengl") == 0 ||
+           g_ascii_strcasecmp (renderer_name, "ngl") == 0)
+    {
+      g_warning ("OSK has no GL renderer yet; using the Cairo renderer");
+      return GSK_TYPE_CAIRO_RENDERER;
+    }
+#endif
 #ifdef GDK_RENDERING_VULKAN
   else if (g_ascii_strcasecmp (renderer_name, "vulkan") == 0)
     return GSK_TYPE_VULKAN_RENDERER;
@@ -513,8 +513,13 @@ get_renderer_for_name (const char *renderer_name)
                         "  broadway - Disabled during GTK build\n"
 #endif
                         "     cairo - Use the Cairo fallback renderer\n"
+#ifdef OSK_HAVE_GPU_RENDERER
                         "    opengl - Use the OpenGL renderer\n"
                         "        gl - Use the OpenGL renderer\n"
+#else
+                        "    opengl - Not available yet in OSK\n"
+                        "        gl - Not available yet in OSK\n"
+#endif
 #ifdef GDK_RENDERING_VULKAN
                         "    vulkan - Use the Vulkan renderer\n"
 #else
@@ -573,6 +578,7 @@ get_renderer_for_backend (GdkSurface *surface)
   return G_TYPE_INVALID;
 }
 
+#ifdef OSK_HAVE_GPU_RENDERER
 static gboolean
 gl_supported_platform (GdkSurface *surface,
                        gboolean    as_fallback)
@@ -622,6 +628,7 @@ get_renderer_for_gl_fallback (GdkSurface *surface)
 
   return GSK_TYPE_GL_RENDERER;
 }
+#endif /* OSK_HAVE_GPU_RENDERER */
 
 #ifdef GDK_RENDERING_VULKAN
 static gboolean
@@ -706,11 +713,15 @@ static struct {
 #ifdef GDK_RENDERING_VULKAN
   { FALSE, get_renderer_for_vulkan },
 #endif
+#ifdef OSK_HAVE_GPU_RENDERER
   { FALSE, get_renderer_for_gl },
+#endif
 #ifdef GDK_RENDERING_VULKAN
   { FALSE, get_renderer_for_vulkan_fallback },
 #endif
+#ifdef OSK_HAVE_GPU_RENDERER
   { FALSE, get_renderer_for_gl_fallback },
+#endif
   { FALSE, get_renderer_fallback },
 };
 

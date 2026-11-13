@@ -26,7 +26,6 @@
 #include "gskrendererprivate.h"
 #include "gskrendernodeprivate.h"
 #include "gdk/gdkcolorstateprivate.h"
-#include "gdk/gdkdrawcontextprivate.h"
 #include "gdk/gdktextureprivate.h"
 
 typedef struct {
@@ -38,7 +37,7 @@ struct _GskCairoRenderer
 {
   GskRenderer parent_instance;
 
-  GdkCairoContext *cairo_context;
+  GdkSurface *surface; /* OSK: an ODK GdkWindow */
 
   ProfileTimers profile_timers;
 };
@@ -59,15 +58,10 @@ gsk_cairo_renderer_realize (GskRenderer  *renderer,
 {
   GskCairoRenderer *self = GSK_CAIRO_RENDERER (renderer);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  /* OSK: ODK windows paint through gdk_window_begin_draw_frame(); there is
+   * no separate draw context to create or attach. */
   if (surface)
-    self->cairo_context = gdk_surface_create_cairo_context (surface);
-G_GNUC_END_IGNORE_DEPRECATIONS
-  if (attach && !gdk_draw_context_attach (GDK_DRAW_CONTEXT (self->cairo_context), error))
-    {
-      g_clear_object (&self->cairo_context);
-      return FALSE;
-    }
+    self->surface = g_object_ref (surface);
 
   return TRUE;
 }
@@ -77,12 +71,7 @@ gsk_cairo_renderer_unrealize (GskRenderer *renderer)
 {
   GskCairoRenderer *self = GSK_CAIRO_RENDERER (renderer);
 
-  if (self->cairo_context)
-    {
-      gdk_draw_context_detach (GDK_DRAW_CONTEXT (self->cairo_context));
-
-      g_clear_object (&self->cairo_context);
-    }
+  g_clear_object (&self->surface);
 }
 
 static GdkTexture *
@@ -151,17 +140,15 @@ gsk_cairo_renderer_render (GskRenderer          *renderer,
                            const cairo_region_t *region)
 {
   GskCairoRenderer *self = GSK_CAIRO_RENDERER (renderer);
+  GdkDrawingContext *context;
   cairo_t *cr;
 
-  gdk_draw_context_begin_frame_full (GDK_DRAW_CONTEXT (self->cairo_context),
-                                     NULL,
-                                     root,
-                                     region);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  cr = gdk_cairo_context_cairo_create (self->cairo_context);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  context = gdk_window_begin_draw_frame (self->surface, region);
+  cr = gdk_drawing_context_get_cairo_context (context);
 
   g_return_if_fail (cr != NULL);
+
+  cairo_save (cr);
 
   if (GSK_RENDERER_DEBUG_CHECK (renderer, GEOMETRY))
     {
@@ -177,11 +164,12 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       cairo_restore (cr);
     }
 
-  gsk_render_node_draw_with_color_state (root, cr, gdk_draw_context_get_color_state (GDK_DRAW_CONTEXT (self->cairo_context)));
+  /* OSK: X11 windows are sRGB */
+  gsk_render_node_draw_with_color_state (root, cr, GDK_COLOR_STATE_SRGB);
 
-  cairo_destroy (cr);
+  cairo_restore (cr);
 
-  gdk_draw_context_end_frame_full (GDK_DRAW_CONTEXT (self->cairo_context), NULL);
+  gdk_window_end_draw_frame (self->surface, context);
 }
 
 static void

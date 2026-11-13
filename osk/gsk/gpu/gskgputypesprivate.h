@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 #include "gsk/gskenums.h"
 
 #include "gdk/gdkmemoryformatprivate.h"

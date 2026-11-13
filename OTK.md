@@ -65,6 +65,50 @@ API that OTK adds. It is marked `GDK_AVAILABLE_IN_OTK_1` in the headers and docu
 
 These follow the GTK 4 API of the same name, so code moving from GTK 4 keeps working.
 
+## OSK, the Ocimum Scene Kit
+
+OSK is GTK 4's rendering engine as a separate OTK library, `libosk-3`. It is OTK's own
+copy of that engine, so TulsiOS can tune and extend it. It is built from GTK 4.24.0's
+`gsk/` and the GTK 4 GDK types it uses; `osk/UPSTREAM` lists the files and how to merge
+a newer GTK.
+
+| | |
+|---|---|
+| Library | `libosk-3.so.0` (links `libodk-3`; does not need `libotk-3`) |
+| pkg-config | `osk-3.0` |
+| Header | `#include <osk/osk.h>` |
+| Introspection | `Osk-3.0` (`Osk.RenderNode`, `Osk.CairoRenderer`, `Osk.Texture`, …) |
+| Build option | `-Dosk=auto\|enabled\|disabled`; needs graphene, libpng, libtiff, libjpeg, harfbuzz-subset |
+
+What it provides, under GTK 4's names so GTK 4 rendering code ports with few edits:
+
+- **Render nodes** (`GskRenderNode` and all node types), `GskTransform`, `GskPath`,
+  `GskStroke`, `GskRoundedRect`, and the `.node` text format
+  (`gsk_render_node_serialize()` / `_deserialize()`), including fonts embedded in it.
+- **Renderers**: `GskCairoRenderer`. `gsk_renderer_render_texture()` needs no window.
+  `gsk_renderer_realize()` takes an ODK `GdkWindow` (OSK's `GdkSurface` is a `GdkWindow`),
+  and `gsk_renderer_render()` paints into it. `GSK_RENDERER` selects the renderer as in
+  GTK 4. The GL renderer is not there yet; `GSK_RENDERER=gl` falls back to Cairo with a
+  warning.
+- **Textures and paintables**: `GdkTexture`, `GdkMemoryTexture` (+ builder),
+  `GdkTextureDownloader`, `GdkColorState`, `GdkCicpParams`, `GdkPaintable`; loading and
+  saving PNG, TIFF and JPEG.
+
+Differences from GTK 4:
+
+- `GdkRGBA` is ODK's, with `double` components (GTK 4: `float`). The API is the same;
+  code that casts a `GdkRGBA *` to `float *` must copy instead.
+- No subsurfaces (Wayland offloading) and no dmabuf textures yet.
+- `GtkSnapshot` belongs to `libotk` (next stage), so `gdk_paintable_snapshot()` needs OTK.
+
+The stages: (1) this core and the Cairo renderer; (2) `GtkSnapshot` and a widget
+`snapshot` vfunc in OTK, with `OTK_RENDERER=legacy|cairo|gl`; (3) GSK's GL renderer on
+X11; (4) Vulkan and TulsiOS's own tuning.
+
+Tests: GTK 4's GSK suite (`osk/testsuite`, from `testsuite/gsk`) runs against OSK with
+the Cairo renderer: render-node comparisons in all variants except `replay` (needs
+`GtkSnapshot`), `.node` parser and serializer tests. `meson test --suite osk --no-suite failing`.
+
 ## The ABI policy
 
 OTK may change anything GTK 3 promised stays stable: struct layouts, signatures,

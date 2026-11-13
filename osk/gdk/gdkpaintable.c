@@ -22,7 +22,7 @@
 #include "gdkpaintable.h"
 
 #include "gdksnapshotprivate.h"
-#include "gdkprivate.h"
+#include "oskprivate.h"
 
 #include <graphene.h>
 

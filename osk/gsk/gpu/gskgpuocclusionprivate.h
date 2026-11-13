@@ -1,11 +1,12 @@
 #pragma once
 
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 #include <gsk/gsktypes.h>
 #include <graphene.h>
 
 #include "gskgputypesprivate.h"
-#include "gskgpurenderpassprivate.h"
+/* OSK: the GPU renderer (gskgpurenderpassprivate.h, gskgpuocclusion.c) arrives in 3c;
+ * gsk/oskgpustubs.c stands in for the functions below until then. */
 #include "gskgputransformprivate.h"
 
 #include "gdk/gdkcolorprivate.h"

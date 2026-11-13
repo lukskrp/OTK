@@ -34,14 +34,12 @@
 #endif
 
 #include <glib.h>
-#include <gdk/gdk.h>
+#include <gdk/oskgdk.h>
 
 G_BEGIN_DECLS
 
-GDK_AVAILABLE_IN_ALL
 void gtk_hsv_to_rgb (float  h, float  s, float  v,
                      float *r, float *g, float *b);
-GDK_AVAILABLE_IN_ALL
 void gtk_rgb_to_hsv (float  r, float  g, float  b,
                      float *h, float *s, float *v);
 

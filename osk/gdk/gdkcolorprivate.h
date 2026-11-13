@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <gdk/gdktypes.h>
+#include "gdktypes.h"
 #include <gdk/gdkcolorstate.h>
 #include <gdk/gdkrgba.h>
 
@@ -103,5 +103,18 @@ void              gdk_color_print               (const GdkColor         *self,
 char *            gdk_color_to_string           (const GdkColor         *self);
 
 #include "gdkcolorimpl.h"
+
+/* OSK: ODK's GdkRGBA has double components, so GTK 4's float color values
+ * cannot be reinterpreted as a GdkRGBA (or the reverse); these copy. */
+static inline const GdkRGBA *
+osk_rgba_from_floats (const float  values[4],
+                      GdkRGBA     *storage)
+{
+  storage->red = values[0];
+  storage->green = values[1];
+  storage->blue = values[2];
+  storage->alpha = values[3];
+  return storage;
+}
 
 G_END_DECLS

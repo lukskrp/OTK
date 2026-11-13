@@ -111,26 +111,26 @@ gsk_conic_gradient_node_add_patch (cairo_pattern_t *pattern,
   cairo_mesh_pattern_end_patch (pattern);
 }
 
+/* OSK: works on float[4] colours; GTK 4 cast them to its float GdkRGBA,
+ * but ODK's GdkRGBA has double components. */
 static void
-gdk_rgba_color_interpolate (GdkRGBA       *dest,
-                            const GdkRGBA *src1,
-                            const GdkRGBA *src2,
-                            double         progress)
+gdk_rgba_color_interpolate (float         dest[4],
+                            const float   src1[4],
+                            const float   src2[4],
+                            double        progress)
 {
-  double alpha = src1->alpha * (1.0 - progress) + src2->alpha * progress;
+  double alpha = src1[3] * (1.0 - progress) + src2[3] * progress;
 
-  dest->alpha = alpha;
+  dest[3] = alpha;
   if (alpha == 0)
     {
-      dest->red = src1->red * (1.0 - progress) + src2->red * progress;
-      dest->green = src1->green * (1.0 - progress) + src2->green * progress;
-      dest->blue = src1->blue * (1.0 - progress) + src2->blue * progress;
+      for (int c = 0; c < 3; c++)
+        dest[c] = src1[c] * (1.0 - progress) + src2[c] * progress;
     }
   else
     {
-      dest->red = (src1->red * src1->alpha * (1.0 - progress) + src2->red * src2->alpha * progress) / alpha;
-      dest->green = (src1->green * src1->alpha * (1.0 - progress) + src2->green * src2->alpha * progress) / alpha;
-      dest->blue = (src1->blue * src1->alpha * (1.0 - progress) + src2->blue * src2->alpha * progress) / alpha;
+      for (int c = 0; c < 3; c++)
+        dest[c] = (src1[c] * src1[3] * (1.0 - progress) + src2[c] * src2[3] * progress) / alpha;
     }
 }
 
@@ -256,9 +256,9 @@ gsk_conic_gradient_node_draw (GskRenderNode *node,
           else
             C = powf (f, exp);
 
-          gdk_rgba_color_interpolate ((GdkRGBA *) &start_color,
-                                      (const GdkRGBA *) &color1,
-                                      (const GdkRGBA *) &color2,
+          gdk_rgba_color_interpolate (start_color,
+                                      color1,
+                                      color2,
                                       C);
 
           f = (end_angle - offset1) / (offset2 - offset1);
@@ -271,9 +271,9 @@ gsk_conic_gradient_node_draw (GskRenderNode *node,
           else
             C = powf (f, exp);
 
-          gdk_rgba_color_interpolate ((GdkRGBA *) &end_color,
-                                      (const GdkRGBA *) &color1,
-                                      (const GdkRGBA *) &color2,
+          gdk_rgba_color_interpolate (end_color,
+                                      color1,
+                                      color2,
                                       C);
 
           gsk_conic_gradient_node_add_patch (pattern,

@@ -255,8 +255,11 @@ gdk_color_state_from_rgba (GdkColorState *self,
                            const GdkRGBA *rgba,
                            float          out_color[4])
 {
+  /* OSK: ODK's GdkRGBA has double components */
+  const float values[4] = { rgba->red, rgba->green, rgba->blue, rgba->alpha };
+
   gdk_color_state_convert_color (GDK_COLOR_STATE_SRGB,
-                                 (const float *) rgba,
+                                 values,
                                  self,
                                  out_color);
 }
