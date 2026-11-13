@@ -442,10 +442,14 @@
  * The version of the API that OTK adds on top of GTK 3. Code that also
  * builds against stock GTK 3 can test `#ifdef OTK_API_VERSION`.
  */
-#define OTK_API_VERSION 1
+#define OTK_API_VERSION 2
 
-/* API that OTK adds on top of GTK 3, by OTK_API_VERSION. */
+/* API that OTK adds on top of GTK 3, by OTK_API_VERSION:
+ * 1: monitor list model, connector and scale; gtk_disable_portals()
+ * 2: GtkWidgetClass.snapshot, gtk_widget_snapshot(), gtk_widget_snapshot_child()
+ *    (an ABI break: libotk-3.so.1) */
 #define GDK_AVAILABLE_IN_OTK_1                _GDK_EXTERN
+#define GDK_AVAILABLE_IN_OTK_2                _GDK_EXTERN
 
 #endif  /* __GDK_VERSION_MACROS_H__ */
 

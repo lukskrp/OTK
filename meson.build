@@ -127,6 +127,11 @@ else
   gail_library_version = '0.0.0'
 endif
 
+# OTK: libotk-3 changed its ABI with OTK_API_VERSION 2 (GtkWidgetClass.snapshot),
+# so it has a soversion of its own.  libodk-3, libosk-3 and libgailutil keep GTK 3's.
+otk_soversion = '1'
+otk_library_version = '@0@.@1@.@2@'.format(otk_soversion, gtk_binary_age - gtk_interface_age, gtk_interface_age)
+
 osx_current = gtk_binary_age - gtk_interface_age + 1
 gtk_osxversions = [osx_current, '@0@.@1@.0'.format(osx_current, gtk_interface_age)]
 
@@ -853,8 +858,8 @@ gir = find_program('g-ir-scanner', required : get_option('introspection'))
 build_gir = gir.found() and get_option('introspection')
 
 subdir('gdk')
+subdir('osk')   # before gtk: libotk links libosk (GtkWidgetClass.snapshot)
 subdir('gtk')
-subdir('osk')
 subdir('modules')
 subdir('libgail-util')
 if get_option('demos')

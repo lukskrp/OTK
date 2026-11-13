@@ -620,6 +620,7 @@ gtk_gir_public_headers = files(
 
 gtk_nogir_public_headers = files(
   'gtkx.h',
+  'otksnapshot.h',   # GtkSnapshot is Osk.Snapshot in introspection
   'gtktextdisplay.h',
 )
 
@@ -975,15 +976,33 @@ foreach l: immodules
   endif
 endforeach
 
+# OTK: GtkWidgetClass.snapshot.  Built on its own so that only this file
+# sees OSK's headers; gtkwidget.c calls it through otkwidgetsnapshotprivate.h.
+otk_snapshot_deps = []
+otk_osk_libs = []
+if osk_enabled
+  gtk_cargs += ['-DOTK_HAVE_OSK']
+  otk_snapshot_deps = [libosk_dep]
+  otk_osk_libs = [libosk]
+endif
+libotk_snapshot = static_library('otk-snapshot',
+  ['otkwidgetsnapshot.c'] + gtk_dep_sources,
+  dependencies: gtk_deps + [libgdk_dep] + otk_snapshot_deps,
+  c_args: gtk_cargs + common_cflags,
+  include_directories: [confinc, gdkinc, gtkinc],
+  pic: true,
+)
+
 # Library
 libgtk = library('otk-3',
-                 soversion: gtk_soversion,
-                 version: gtk_library_version,
+                 soversion: otk_soversion,
+                 version: otk_library_version,
                  sources: [typefuncs, gtk_sources, gtkmarshal_h, gtkprivatetypebuiltins_h],
                  c_args: gtk_cargs + common_cflags,
                  include_directories: [confinc, gdkinc, gtkinc],
                  dependencies: gtk_deps + [libgdk_dep] + gtk_included_im_deps,
-                 link_with: libgdk,
+                 link_with: [libgdk] + otk_osk_libs,
+                 link_whole: libotk_snapshot,
                  link_args: common_ldflags,
                  darwin_versions : gtk_osxversions,
                  install: true)
@@ -1003,6 +1022,9 @@ if build_gir
   ]
 
   gtk_gir_includes = [gdk_gir[0], 'Atk-1.0']
+  if osk_enabled
+    gtk_gir_includes += [osk_gir[0]]   # GtkSnapshot is Osk.Snapshot
+  endif
   gtk_gir_extra_args = gir_args + ['-DGTK_COMPILATION',
                                    '--c-include=gtk/gtk-a11y.h']
   if x11_enabled

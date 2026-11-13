@@ -33,6 +33,7 @@
 #include <gtk/gtkaccelgroup.h>
 #include <gtk/gtkborder.h>
 #include <gtk/gtktypes.h>
+#include <gtk/otksnapshot.h>
 #include <atk/atk.h>
 
 G_BEGIN_DECLS
@@ -358,6 +359,11 @@ struct _GtkWidget
  * @queue_draw_region: Invalidates the area of widget defined by
  *   region by calling gdk_window_invalidate_region() on the widget's
  *   window and all its child windows.
+ * @snapshot: Appends the widget's render nodes to a #GtkSnapshot (OSK;
+ *   OTK 2). A widget class that implements it is drawn from its nodes,
+ *   also by the legacy renderer, and #GtkWidget::draw is not emitted for
+ *   it; it adds its children with gtk_widget_snapshot_child(). The default
+ *   draws the widget into a cairo node through #GtkWidget::draw.
  */
 struct _GtkWidgetClass
 {
@@ -598,6 +604,10 @@ struct _GtkWidgetClass
 					       gint              *baseline);
   void         (*queue_draw_region)           (GtkWidget         *widget,
 					       const cairo_region_t *region);
+
+  /* OTK 2 */
+  void         (* snapshot)                   (GtkWidget         *widget,
+                                               GtkSnapshot       *snapshot);
 
   /*< private >*/
 
@@ -1489,6 +1499,14 @@ void                    gtk_widget_set_font_map         (GtkWidget             *
                                                          PangoFontMap          *font_map);
 GDK_AVAILABLE_IN_3_18
 PangoFontMap *          gtk_widget_get_font_map         (GtkWidget             *widget);
+
+GDK_AVAILABLE_IN_OTK_2
+void                    gtk_widget_snapshot             (GtkWidget             *widget,
+                                                         GtkSnapshot           *snapshot);
+GDK_AVAILABLE_IN_OTK_2
+void                    gtk_widget_snapshot_child       (GtkWidget             *widget,
+                                                         GtkWidget             *child,
+                                                         GtkSnapshot           *snapshot);
 
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkWidget, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GtkRequisition, gtk_requisition_free)

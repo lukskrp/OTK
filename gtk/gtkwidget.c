@@ -69,6 +69,7 @@
 #include "gtkapplicationprivate.h"
 #include "gtkgestureprivate.h"
 #include "gtkwidgetpathprivate.h"
+#include "otkwidgetsnapshotprivate.h"
 
 /* for the use of round() */
 #include "fallback-c89.c"
@@ -1063,6 +1064,7 @@ gtk_widget_class_init (GtkWidgetClass *klass)
   klass->grab_notify = NULL;
   klass->child_notify = NULL;
   klass->draw = NULL;
+  _otk_widget_class_init_snapshot (klass);
   klass->mnemonic_activate = gtk_widget_real_mnemonic_activate;
   klass->grab_focus = gtk_widget_real_grab_focus;
   klass->focus = gtk_widget_real_focus;
@@ -7079,6 +7081,15 @@ gtk_widget_draw_internal (GtkWidget *widget,
         g_warning ("%s %p is drawn without a current allocation. This should not happen.", G_OBJECT_TYPE_NAME (widget), widget);
 #endif
 
+#ifdef OTK_HAVE_OSK
+      /* OTK: a widget that implements GtkWidgetClass.snapshot is drawn from
+       * its render nodes; ::draw is not emitted for it. */
+      if (_otk_widget_has_snapshot (widget))
+        {
+          _otk_widget_draw_snapshot (widget, cr);
+        }
+      else
+#endif
       if (g_signal_has_handler_pending (widget, widget_signals[DRAW], 0, FALSE))
         {
           g_signal_emit (widget, widget_signals[DRAW],
@@ -12500,6 +12511,10 @@ gtk_widget_real_unrealize (GtkWidget *widget)
 {
   GtkWidgetPrivate *priv = widget->priv;
 
+#ifdef OTK_HAVE_OSK
+  _otk_widget_unrealize_renderer (widget);
+#endif
+
   g_assert (!widget->priv->mapped);
 
    /* We must do unrealize child widget BEFORE container widget.
@@ -17605,6 +17620,18 @@ gtk_widget_render (GtkWidget            *widget,
       /* We only render double buffered on native windows */
       if (!gdk_window_has_native (window))
         return;
+
+#ifdef OTK_HAVE_OSK
+      /* OTK: OTK_RENDERER=cairo renders toplevels from their render nodes */
+      if (_otk_widget_wants_gsk_render (widget, window))
+        {
+          int tx, ty;
+
+          _gtk_widget_get_translation_to_window (widget, window, &tx, &ty);
+          if (_otk_widget_render (widget, window, region, tx, ty))
+            return;
+        }
+#endif
 
       context = gdk_window_begin_draw_frame (window, region);
       cr = gdk_drawing_context_get_cairo_context (context);

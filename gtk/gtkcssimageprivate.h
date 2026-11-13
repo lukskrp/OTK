@@ -118,6 +118,10 @@ void           _gtk_css_image_get_concrete_size    (GtkCssImage                *
                                                     double                     *concrete_width,
                                                     double                     *concrete_height);
 cairo_surface_t *
+               _gtk_css_image_create_similar       (cairo_surface_t            *target,
+                                                    int                         width,
+                                                    int                         height);
+cairo_surface_t *
                _gtk_css_image_get_surface          (GtkCssImage                *image,
                                                     cairo_surface_t            *target,
                                                     int                         surface_width,

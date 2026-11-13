@@ -111,6 +111,34 @@ foreach t : tests
   )
 endforeach
 
+# OTK: GtkWidgetClass.snapshot, run with both renderers
+if osk_enabled
+  snapshot_test = executable('snapshot', 'snapshot.c',
+    c_args: test_cargs,
+    dependencies: [libgtk_dep, libosk_dep],
+    install: get_option('installed_tests'),
+    install_dir: installed_test_bindir)
+
+  foreach renderer : ['legacy', 'cairo']
+    test('snapshot-' + renderer, snapshot_test,
+         args: [ '--tap', '-k' ],
+         env: [ 'GIO_USE_VOLUME_MONITOR=unix',
+                'GSETTINGS_BACKEND=memory',
+                'GTK_CSD=1',
+                'G_ENABLE_DIAGNOSTIC=0',
+                'OTK_RENDERER=' + renderer,
+                'GDK_BACKEND=x11',   # it reads back X windows
+                'G_TEST_SRCDIR=@0@'.format(meson.current_source_dir()),
+                'G_TEST_BUILDDIR=@0@'.format(meson.current_build_dir()),
+                'GSETTINGS_SCHEMA_DIR=@0@'.format(gtk_schema_build_dir),
+                'GTK_TEST_MESON=1',
+              ],
+         suite: ['gtk', 'otk-snapshot'],
+         is_parallel: false,   # reads the screen; windows must not overlap
+    )
+  endforeach
+endif
+
 # FIXME: if objc autotestkeywords_CPPFLAGS += -DHAVE_OBJC=1 -x objective-c++
 if add_languages('cpp', required: false, native: false)
   test_exe = executable('autotestkeywords',

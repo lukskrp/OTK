@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#include <math.h>
+
 #include "gtkcssimageprivate.h"
 
 #include "gtkcssstyleprivate.h"
@@ -380,6 +382,29 @@ _gtk_css_image_get_concrete_size (GtkCssImage *image,
     }
 }
 
+/* OTK: an intermediate surface for a CSS image (border-image slices, repeated
+ * backgrounds).  Inside an OSK cairo node the target is a recording surface,
+ * whose "similar" surface records vectors: scaling such a slice re-renders it
+ * instead of sampling its pixels, and gives different results.  Images are
+ * pixels, so they get an image surface at the target's device scale. */
+cairo_surface_t *
+_gtk_css_image_create_similar (cairo_surface_t *target,
+                               int              width,
+                               int              height)
+{
+  cairo_surface_t *result;
+  double sx, sy;
+
+  if (cairo_surface_get_type (target) != CAIRO_SURFACE_TYPE_RECORDING)
+    return cairo_surface_create_similar (target, CAIRO_CONTENT_COLOR_ALPHA, width, height);
+
+  cairo_surface_get_device_scale (target, &sx, &sy);
+  result = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, ceil (width * sx), ceil (height * sy));
+  cairo_surface_set_device_scale (result, sx, sy);
+
+  return result;
+}
+
 cairo_surface_t *
 _gtk_css_image_get_surface (GtkCssImage     *image,
                             cairo_surface_t *target,
@@ -394,10 +419,7 @@ _gtk_css_image_get_surface (GtkCssImage     *image,
   g_return_val_if_fail (surface_height > 0, NULL);
 
   if (target)
-    result = cairo_surface_create_similar (target,
-                                           CAIRO_CONTENT_COLOR_ALPHA,
-                                           surface_width,
-                                           surface_height);
+    result = _gtk_css_image_create_similar (target, surface_width, surface_height);
   else
     result = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
                                          surface_width,
